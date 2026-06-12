@@ -76,10 +76,10 @@ The "Claude in the loop" property is the moat, not a limitation. Auto-layout lib
 | Phase | Deliverable | Target |
 |---|---|---|
 | ~~**Validate**~~ | ~~5-Mermaid blind-rate experiment~~ | **DONE — FAILED** (see below) |
-| **P0** | JSON IR + JSON Schema validator + `schema_version` enforcement | v3.0-alpha |
-| **P0.5** | `render.js` — pure-JS renderer takes IR → HTML using existing template. Coordinates required (no auto-layout). | v3.0-alpha |
+| **P0** | JSON IR + JSON Schema validator + `schema_version` enforcement | **DONE** — shipped for the four typed modes (workflow / sequence / dataflow / lifecycle), enforced at runtime via ajv |
+| **P0.5** | `render.js` — pure-JS renderer takes IR → HTML using existing template. Coordinates required (no auto-layout). | **DONE** — the four typed renderers cover IR → HTML; an architecture-mode `render.js` is still not built |
 | ~~**P1**~~ | ~~Mermaid flowchart parser → IR~~ | **KILLED** — experiment showed auto-layout + CSS is not enough |
-| **P2** | Updated SKILL.md teaching Claude to accept Mermaid as input and lay out from scratch (prompt engineering, no parser) | v3.0-beta |
+| **P2** | Updated SKILL.md teaching Claude to accept Mermaid as input and lay out from scratch (prompt engineering, no parser) | **DONE — 2026-06-11** — implemented in SKILL.md's "Mermaid as an Input Dialect" section |
 | ~~**P3**~~ | ~~End-to-end parser pipeline~~ | **KILLED** |
 | ~~**P4**~~ | ~~IR → Mermaid output + C4 input~~ | **KILLED** |
 
@@ -94,9 +94,9 @@ The experiment tested whether auto-layout (dagre) + archify CSS (version B) look
 ### Done when (revised, post-experiment)
 
 - `render.js` reproduces today's `examples/web-app.html` from a hand-written `diagram.json`.
-- `schema_version: 1` is documented in `docs/diagram-json-schema.md` with the full JSON Schema published.
+- `schema_version: 1` is documented in `archify/schemas/README.md` with the full JSON Schemas published (`docs/` now hosts the GitHub Pages site, not internal docs).
 - Claude, given an existing `diagram.json`, can make targeted coordinate edits without unrelated drift.
-- SKILL.md updated to mention Mermaid as an accepted input dialect (prompt engineering, not parser).
+- SKILL.md updated to mention Mermaid as an accepted input dialect (prompt engineering, not parser). **DONE — 2026-06-11**, see the "Mermaid as an Input Dialect" section.
 - README updated to describe the new stable-iteration workflow.
 
 ### Workflow renderer pilot (2026-04-24)

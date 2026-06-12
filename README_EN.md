@@ -1,8 +1,8 @@
-![Archify product preview](examples/images/archify-readme-hero.png)
+![Archify product preview](docs/assets/archify-readme-hero.png)
 
 # Archify
 
-**Generate beautiful architecture, technical workflow, sequence, data-flow, and lifecycle diagrams in chat. Switch dark / light. Copy to clipboard or export crisp 4× PNG / JPEG / WebP / SVG.**
+**Generate beautiful architecture, technical workflow, sequence, data-flow, and lifecycle diagrams in chat. Switch dark / light. Copy to clipboard or export crisp up-to-4× PNG / JPEG / WebP / SVG.**
 
 Archify is a [Claude Skill](https://support.claude.com/en/articles/12512180-using-skills-in-claude) that turns a plain-English description of your system or process into a polished, self-contained technical diagram — a single HTML file you can open, toggle themes on, copy to the clipboard, and export at maximum resolution.
 
@@ -10,14 +10,16 @@ Archify is a [Claude Skill](https://support.claude.com/en/articles/12512180-usin
 - **Workflow, sequence, data-flow, and lifecycle diagrams too** — technical flows, approvals, tool calls, CI/CD, runbooks, request call chains, data pipelines, PII boundaries, and state machines can be drawn
 - **Built-in theme toggle** — one click between dark and light, persists across sessions
 - **Copy PNG to clipboard** — one click, paste straight into Slack / Notion / GitHub
-- **Ultra-crisp image export** — PNG / JPEG / WebP rendered natively at 4× source resolution (no upsampling blur), or SVG for true vector
+- **Ultra-crisp image export** — PNG / JPEG / WebP rendered natively at up to 4× source resolution (no upsampling blur), or SVG for true vector
 - **SVG follows system dark/light** — exported SVGs ship with both variable sets + `@media (prefers-color-scheme)`, so dropping one into a GitHub README makes it follow the reader's color preference (no more two PNGs wrapped in `<picture>`)
-- **Self-contained HTML** — zero dependencies, share by sending the file
+- **Self-contained HTML** — the generated file has zero dependencies, share by sending it
 - **Iterate by chat** — "add Redis", "move auth to the left", "use emerald for the API"
 
 ![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)
 ![Claude](https://img.shields.io/badge/Claude-Skill-7C3AED?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.4.0-0891b2?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.6.0-0891b2?style=flat-square)
+
+**Project page:** [tt-a1i.github.io/archify](https://tt-a1i.github.io/archify/)
 
 <p align="right"><a href="./README.md">中文</a></p>
 
@@ -27,11 +29,11 @@ Same diagram, two themes, one click to switch:
 
 | Dark | Light |
 |---|---|
-| ![Dark theme](examples/images/archify-dark.png) | ![Light theme](examples/images/archify-light.png) |
+| ![Dark theme](docs/assets/archify-dark.png) | ![Light theme](docs/assets/archify-light.png) |
 
-The Export menu — Copy PNG to clipboard plus 4 download formats (all raster exports at 4× source resolution):
+The Export menu — Copy PNG to clipboard plus 4 download formats (all raster exports at up to 4× source resolution):
 
-![Export menu](examples/images/archify-menu.png)
+![Export menu](docs/assets/archify-menu.png)
 
 Live example: [`examples/web-app.html`](examples/web-app.html) — open in a browser, press <kbd>T</kbd> to toggle theme, <kbd>E</kbd> to open Export. Append `?theme=light` or `?openExport=1` to the URL for deterministic screenshots.
 
@@ -56,6 +58,8 @@ User submits a request -> Agent plans -> Approval Gate if needed -> Tool Call ->
 
 Open the example here: [`examples/workflow-agent-tool-call-rendered.html`](examples/workflow-agent-tool-call-rendered.html).
 
+![Workflow example](docs/assets/archify-workflow.png)
+
 Sequence diagrams explain a narrower interaction over time:
 
 ```text
@@ -65,7 +69,7 @@ User opens a page, the frontend calls the API, the API verifies JWT, reads Redis
 
 Open the example here: [`examples/sequence-cache-miss-request.html`](examples/sequence-cache-miss-request.html).
 
-![Sequence example](examples/images/archify-sequence.png)
+![Sequence example](docs/assets/archify-sequence.png)
 
 Data Flow diagrams explain how data assets move and change:
 
@@ -77,7 +81,7 @@ Warehouse stores analytics tables, Feature Store derives daily features, Dashboa
 
 Open the example here: [`examples/dataflow-product-analytics.html`](examples/dataflow-product-analytics.html).
 
-![Data Flow example](examples/images/archify-dataflow.png)
+![Data Flow example](docs/assets/archify-dataflow.png)
 
 Lifecycle diagrams explain how an object changes state:
 
@@ -89,24 +93,25 @@ wait at Blocked, retry after Failed, end at Cancelled or Expired, or finish at C
 
 Open the example here: [`examples/lifecycle-agent-run.html`](examples/lifecycle-agent-run.html).
 
-![Lifecycle example](examples/images/archify-lifecycle.png)
+![Lifecycle example](docs/assets/archify-lifecycle.png)
 
 ## What's new
 
-Archify is based on [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator) v1.0 (dark-only, HTML output). **2.0** rewrote the template around a themeable CSS-variable system and added a client-side export pipeline. **2.1** added copy-to-clipboard + keyboard nav. **2.2** added a print stylesheet + local-font fallback. **2.3** fixed a long-standing upsampling bug and made every raster export genuinely sharp at 4× source resolution (the 1× / 2× / 4× selector introduced in 2.1 was removed at the same time — it only encouraged picking a soft-looking scale). **2.4** upgraded the SVG export to a dual-theme self-contained file — drop the same `.svg` into a GitHub README and it follows the reader's dark/light preference automatically.
+Archify is based on [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator) v1.0 (dark-only, HTML output). **2.0** rewrote the template around a themeable CSS-variable system and added a client-side export pipeline. **2.1** added copy-to-clipboard + keyboard nav. **2.2** added a print stylesheet + local-font fallback. **2.3** fixed a long-standing upsampling bug and made every raster export genuinely sharp at 4× source resolution (the 1× / 2× / 4× selector introduced in 2.1 was removed at the same time — it only encouraged picking a soft-looking scale). **2.4** upgraded the SVG export to a dual-theme self-contained file — drop the same `.svg` into a GitHub README and it follows the reader's dark/light preference automatically. **2.5** is a hardening release: a batch of verified renderer and validation bug fixes (template slot corruption, cross-lane lifecycle overlap detection, light-theme lane colors in PNG/SVG exports, Safari clipboard copy), LLM-ergonomic validation errors with numeric thresholds and fix suggestions, Mermaid accepted as an input dialect (mapped through `SKILL.md` prompts, not a parser), CJK-aware text measurement plus CJK font fallbacks, and a golden-file test suite with CI.
 
-| Feature | v1.0 | 2.0 | 2.1 | 2.2 | 2.3 | 2.4 |
-|---|---|---|---|---|---|---|
-| Dark theme | Yes | Yes | Yes | Yes | Yes | Yes |
-| Light theme | — | Toggle | Toggle | Toggle | Toggle + <kbd>T</kbd> shortcut | Same |
-| PNG / JPEG / WebP download | manual screenshot | 2× bitmap-upsampled | 1× / 2× / 4× selector (still upsampled) | same | **4× rasterized natively — no blur** | Same |
-| SVG download | — | Vector, styles inlined (single theme) | Same | Same | Same | **Dual-theme self-contained** (`@media prefers-color-scheme`) |
-| Copy PNG to clipboard | — | — | Yes | Same | Yes (always 4×) | Same |
-| Keyboard shortcuts | — | — | <kbd>T</kbd> / <kbd>E</kbd> + menu nav | Same | Same | Same |
-| Accessibility | — | — | ARIA + focus-visible | Same | Same | Same |
-| Print stylesheet | — | — | — | Yes | Yes (+ landscape + 2-col cards) | Same |
-| Local-font fallback on export | — | — | — | Yes | Yes | Same |
-| Styling model | Inline `fill` / `stroke` | CSS custom properties + semantic classes | Same | Same | Same | Same |
+| Feature | v1.0 | 2.0 | 2.1 | 2.2 | 2.3 | 2.4 | 2.5 |
+|---|---|---|---|---|---|---|---|
+| Dark theme | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Light theme | — | Toggle | Toggle | Toggle | Toggle + <kbd>T</kbd> shortcut | Same | Same |
+| PNG / JPEG / WebP download | manual screenshot | 2× bitmap-upsampled | 1× / 2× / 4× selector (still upsampled) | same | **4× rasterized natively — no blur** | Same | **Light-export lane colors fixed** |
+| SVG download | — | Vector, styles inlined (single theme) | Same | Same | Same | **Dual-theme self-contained** (`@media prefers-color-scheme`) | Same (lane colors fixed) |
+| Copy PNG to clipboard | — | — | Yes | Same | Yes (up to 4×) | Same | **Safari fix** |
+| Keyboard shortcuts | — | — | <kbd>T</kbd> / <kbd>E</kbd> + menu nav | Same | Same | Same | Same |
+| Accessibility | — | — | ARIA + focus-visible | Same | Same | Same | Same (+ menu a11y fixes) |
+| Print stylesheet | — | — | — | Yes | Yes (+ landscape + 2-col cards) | Same | Same |
+| Local-font fallback on export | — | — | — | Yes | Yes | Same | **+ CJK font fallback** |
+| Styling model | Inline `fill` / `stroke` | CSS custom properties + semantic classes | Same | Same | Same | Same | Same |
+| Typed renderers + schema validation | — | — | — | — | — | — | **Yes (with tests & CI)** |
 
 ## Quick start
 
@@ -129,8 +134,24 @@ unzip archify.zip -d ~/.claude/skills/
 unzip archify.zip -d ./.claude/skills/
 ```
 
+The typed renderers (workflow / sequence / dataflow / lifecycle) rely on ajv for schema validation, which takes a one-time `npm install` in the skill directory. Claude installs it automatically on first use, following the Setup instructions in `SKILL.md` — or run it yourself:
+
+```bash
+cd ~/.claude/skills/archify && npm install
+```
+
+Without the dependency the renderers skip schema validation (layout checks still run).
+
 **Claude.ai Projects (alternative):**
 Upload [`archify.zip`](archify.zip) to your Project Knowledge.
+
+What each install surface can do:
+
+| Install surface | Capability |
+|---|---|
+| **Claude Code** | Full — runs the typed renderers + schema validation |
+| **Claude.ai (zip upload)** | Usually full — depends on whether the sandbox can `npm install`, which it typically can |
+| **Project Knowledge** | Architecture mode only — no code execution, purely prompt-driven |
 
 ### 2. Describe your system
 
@@ -181,7 +202,7 @@ Open the generated HTML in any browser. Top-right you'll see two buttons:
 | **Download PNG / JPEG / WebP** | Saves a raster image. JPEG/WebP are painted over the current theme's background (no alpha); PNG keeps transparency. |
 | **Download SVG** | Vector export with all styles inlined, **dual-theme self-contained**. The file ships with both dark and light CSS variable sets plus a `@media (prefers-color-scheme)` rule — drop the same `.svg` into a GitHub README or blog and it follows the reader's preference automatically. Still editable in Figma / Illustrator. Scales losslessly. |
 
-Every raster export (Copy PNG, Download PNG/JPEG/WebP) is rendered natively by the browser at **4× the diagram's intrinsic resolution** — the serialized SVG is given a `width`/`height` of `4 × viewBox`, rasterized by the browser at that resolution, and drawn to the canvas at natural size (no upsampling). This produces genuinely crisp output for retina displays, slides, and print. There is no scale dial — maximum sharpness is the default and the only option.
+Every raster export (Copy PNG, Download PNG/JPEG/WebP) is rendered natively by the browser at **up to 4× the diagram's intrinsic resolution** (oversized diagrams step down to 3×/2× to stay within browser canvas limits) — the serialized SVG is given a `width`/`height` of `4 × viewBox`, rasterized by the browser at that resolution, and drawn to the canvas at natural size (no upsampling). This produces genuinely crisp output for retina displays, slides, and print. There is no scale dial — maximum safe sharpness is always chosen automatically.
 
 ### Keyboard
 
@@ -278,7 +299,7 @@ Each color has coordinated dark-mode and light-mode variants that switch togethe
 
 - **Styling:** CSS custom properties on `:root` + `[data-theme="light"]`; SVG elements reference semantic classes (`c-frontend`, `t-muted`, `a-emphasis`, etc.). Toggling `data-theme` on `<html>` re-themes the entire diagram including gradient, grid, arrows, and mask rects.
 - **Export pipeline:** The SVG is cloned, host `<style>` is inlined, and current theme variables are resolved and written into a `:root` rule on the clone. For raster formats the clone's `width`/`height` are set to `4 × viewBox` so the browser rasterizes the vectors at target resolution natively; the canvas is sized to match and the image is drawn at natural size (no bitmap upsampling). `toBlob(mime)` then produces the file. JPEG gets an explicit background fill since it has no alpha. If the target resolution would exceed the browser's canvas limits, the pipeline automatically falls back to 3× or 2× so the export still succeeds.
-- **Self-contained output:** Single HTML file, Google Fonts link + inline SVG + ~3 KB of embedded JS. No build step, no JS framework, no server.
+- **Self-contained output:** Single HTML file, Google Fonts link + inline SVG + ~19 KB of embedded JS. No build step, no JS framework, no server — the generated HTML itself has zero dependencies (the typed renderers need `npm install` for ajv, see [Install](#1-install-the-skill)).
 - **Browser support:** Any modern browser (Chrome, Safari, Firefox, Edge). Needs `Image` + `canvas.toBlob` with `image/webp` support for WebP export.
 
 ## Attribution
@@ -296,6 +317,16 @@ Archify 2.x contributes:
 - Updated `SKILL.md` to guide Claude toward class-based (themeable) diagrams
 
 Both projects are MIT-licensed.
+
+## Roadmap
+
+See [ROADMAP.md](ROADMAP.md).
+
+Next up is **v3.0 — JSON IR stabilization**: a minimal `diagram.json` intermediate format so Claude can make local coordinate edits without drifting unrelated components, with `git diff`-friendly output and theme/palette swaps that don't require re-rendering.
+
+> **About Mermaid import:** the automatic Mermaid parser route was cut after an experiment showed that auto-layout + archify CSS doesn't look meaningfully better than native Mermaid ([experiments/v3-mermaid-validation/RESULT.md](experiments/v3-mermaid-validation/RESULT.md)). Archify's aesthetic core is Claude's layout judgment, not the CSS. You can still paste Mermaid code and have Claude lay out an archify-style diagram from scratch — it goes through the `SKILL.md` prompts, not a parser.
+>
+> The former v2.4 / v2.5 plans (`?exportScale=N`, color-blind palettes, share links) were also dropped. See the [ROADMAP "Not planned" section](ROADMAP.md#not-planned) for the rationale.
 
 ## License
 

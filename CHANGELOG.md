@@ -4,6 +4,25 @@ All notable changes are documented here. Format loosely follows [Keep a Changelo
 
 ## [Unreleased]
 
+## [2.6.0] — 2026-06-12
+
+### Added
+- **Architecture renderer.** The default, highest-traffic mode now has a constrained renderer (`renderers/architecture/render-architecture.mjs`) and JSON Schema (`schemas/architecture.schema.json`), bringing it to validation parity with the four typed modes — without auto-layout. Claude still picks all coordinates (`pos`/`size`); the renderer handles the mechanical work: the two-rect `c-mask` pattern, arrows-before-boxes z-order, an auto-built legend, and an auto-fitted `viewBox`.
+- **Boundaries from `wraps`.** A `region` or `security-group` boundary lists the component ids it encloses; the renderer computes the box with correct 30/50 padding automatically, eliminating the hand-arithmetic that caused the v2.2.1 padding bug.
+- **Architecture example.** Added `archify/examples/web-app.architecture.json` rendered to `examples/web-app-rendered.html`, wired into the golden suite (5th entry).
+- **Geometry unit tests.** `archify/test/geometry.test.mjs` directly tests the pure helpers every renderer depends on (`rectsOverlap`, `anchor`, `roundedPath`, `labelPoint`, `chosenSide`, `textUnits`, …) — previously covered only transitively by golden byte-compares.
+- **Layout-rule coverage matrix.** `archify/test/layout-rules.test.mjs` drives one minimal-violation case per high-value layout rule across all five modes and asserts the error message carries its numeric threshold and remediation hint (the LLM-facing DX contract).
+- **Degraded-mode fuzz net.** `archify/test/degraded.test.mjs` asserts that type-wrong-but-JSON-legal input always fails friendly (non-zero exit, no `TypeError`, no `NaN`/`undefined` written) and that valid order-shuffles always render.
+
+### Changed
+- `npm test` now runs the golden suite plus `node --test test/*.test.mjs` (geometry, layout-rules, degraded). The `architecture` schema is registered in `validator.mjs` and covered by `render:examples`.
+- `textUnits` now counts supplementary-plane CJK and emoji as double-width (added the `u` flag and astral ranges).
+
+### Fixed
+- **Degraded-mode robustness (no ajv).** A type-wrong top-level field (e.g. `nodes: "oops"`) or a missing coordinate field (e.g. a node with no `col`) previously threw a raw `TypeError` before the friendly checks ran, or exited 0 while writing `<rect x="NaN">` into the HTML. Renderers now coerce non-array fields via `asArray`, guard non-finite coordinates with `isFinitePoint`, and validate `cards`/`messages`/`segments`/`activations` are arrays — so malformed input always produces an actionable message instead of a crash or silent corruption.
+
+## [2.5.0] — 2026-06-11
+
 ### Added
 - **Workflow diagram mode.** Archify now includes a renderer-backed workflow diagram type for technical flows, approval chains, tool calls, CI/CD paths, runbooks, and process ownership diagrams. Workflow diagrams use a JSON IR with lanes, nodes, routed edges, and summary cards, then render into the same standalone HTML shell with theme toggle and export menu.
 - **Workflow JSON Schema.** Added `archify/schemas/workflow.schema.json` to document and validate the workflow IR shape.
@@ -18,10 +37,50 @@ All notable changes are documented here. Format loosely follows [Keep a Changelo
 - **Lifecycle diagram mode.** Added a renderer-backed lifecycle/state-machine diagram type for object lifecycles, wait states, retries, cancellation, timeout, terminal states, and recovery paths.
 - **Lifecycle JSON Schema.** Added `archify/schemas/lifecycle.schema.json` to document and validate the lifecycle IR shape.
 - **Lifecycle example.** Added a rendered agent-run lifecycle example at `examples/lifecycle-agent-run.html`, plus a README preview screenshot.
+- **Runtime JSON Schema validation.** All four typed renderers validate their JSON IR against the published schemas via ajv (draft 2020-12); violations exit non-zero with path-prefixed error messages, and error paths carry element ids (e.g. `/nodes/3 (id/label: "router")`). When dependencies aren't installed, the renderer warns and skips schema validation gracefully — layout checks still run.
+- **GitHub Pages landing page.** Added a product landing site under `docs/` plus a repository social preview image.
+- **Mermaid as an input dialect.** New `SKILL.md` section maps `flowchart` → workflow, `sequenceDiagram` → sequence, and `stateDiagram` → lifecycle so Claude can accept pasted Mermaid and lay out from scratch (prompt engineering, no parser) — closing roadmap item P2.
+- **Label collision detection.** New validation checks flag label-vs-node and label-vs-label collisions, plus node labels overflowing their boxes.
+- **CJK-aware text width estimation.** Full-width characters count as 2 units, and the template plus exported-SVG font stacks gained PingFang SC / Microsoft YaHei / Noto Sans CJK SC fallbacks.
+- **Golden test suite.** `archify/test/golden.mjs` byte-compares the four rendered examples, runs 6 negative validation cases (schema + layout), and checks `web-app.html` template freshness and version sync — wired to `npm test`.
+- **Example re-render script.** `archify/test/render-examples.mjs` re-renders every example in one shot via `npm run render:examples`.
+- **CI workflow.** `.github/workflows/ci.yml` runs the test suite on a Node 20/22 matrix and verifies `archify.zip` freshness by rebuilding and diffing.
+- **Release workflow.** `.github/workflows/release.yml` builds the zip on `v*` tags, verifies the tag matches `package.json`, and attaches the artifact to the GitHub Release.
+- **Zip build script.** `scripts/build-zip.sh` builds `archify.zip` from `archify/` (including `package.json`, the lockfile, and the newly bundled `archify/LICENSE`; excluding `node_modules`). `package.json` declares `engines.node >= 18`.
+- **Workflow preview image.** Added `docs/assets/archify-workflow.png` (4× dark export) — workflow was the only diagram type without a preview screenshot.
+- **Generator metadata & accessibility.** Generated HTML carries `<meta name="generator" content="archify 2.5.0">`; the SVG root gets `role="img"` + `aria-label`, toasts get `role="status"`, and the export menu fixes focus return to the trigger, ArrowDown-to-open, and separator ARIA.
+- **Async Google Fonts loading.** The `media="print"` onload trick plus preconnect and a noscript fallback mean an offline or slow network no longer blocks first paint.
+- **Theme FOUC guard.** An early script in `<head>` applies the stored theme before first paint, and pages without an explicit preference now follow live system theme changes.
+- **`--text-faint` UI variable.** Menu hints and the footer now meet contrast standards; the SVG `t-dim` color is unchanged.
 
 ### Changed
 - **Template responsive polish.** The shared HTML template now handles narrow viewports better: the toolbar no longer overlaps the title, diagrams can scale down to the available width, and cards stack cleanly on mobile.
 - **Subtle swimlane styling.** Added `c-lane` for workflow/process swimlanes so workflow boundaries do not visually overpower the main path.
+- **Lifecycle diagram reworked as a phase map.** The lifecycle visual model was redesigned across several composition passes: phase bands, decluttered middle lanes, and refined transition labels.
+- **Shared renderer code.** The typed renderers share `utils.mjs` (with hardened template slot replacement), and this release extracts `renderers/shared/geometry.mjs` (geometry/class maps), `cli.mjs` (CLI head/tail), and `schemas/common.schema.json` (`$ref`-shared id/point/componentType/variant/cards definitions). ajv now runs in strict mode.
+- **Validation error messages rewritten.** Every check now reports numeric thresholds, the valid range, and which field to change.
+- **`SKILL.md` restructured (433 → ~205 lines).** New Setup section (npm install, graceful degradation, architecture-mode fallback when no shell is available), per-mode JSON examples upgraded from empty skeletons to renderable snippets (all verified to pass first try), per-mode layout budgets (columns/rows/coordinate ranges/spacing), documented lifecycle reserved-lane (`main`/`terminal`) semantics, a 6-item machine-checkable architecture-mode checklist, a pointer to the renderer README for depth, and corrected viewBox guidance. Frontmatter version is 2.5 and the description gained Mermaid/flowchart trigger words.
+- **Lifecycle band titles.** Band titles now render from lane labels (the schema-required field is finally used), the main track length derives from actually occupied columns, and a missing `main` lane is a validation error.
+- **Sequence timeline scaling.** The timeline scales with viewBox height (taller viewBox = more timeline room), and segments are validated (`to > from`, within the canvas).
+- **Workflow sizing defaults.** Omitting the viewBox now auto-computes height from the lane count, and the default width dropped 1000 → 720, eliminating 320px of dead space.
+- **Schema limits tightened.** Column caps added (workflow `col ≤ 5`, lifecycle `col ≤ 4`), sequence messages require `y ≥ 160`, and viewBox minimums are stricter.
+- **Exported SVG embeds only SVG-relevant CSS.** ~9 KB of toolbar/cards/print rules are stripped from `.svg` downloads.
+- **Download filename cleanup.** The redundant `-diagram` suffix is stripped from export filenames.
+- **Docs images consolidated under `docs/assets/`.** `examples/images/` is removed, the orphaned `archify-print.png` deleted, and `archify-lifecycle.png` regenerated with the new band titles.
+- **Docs accuracy.** README's "~3 KB embedded JS" corrected to ~19 KB; "4× export" is now documented as *up to* 4× (oversized diagrams automatically step down to 3×/2× via `pickSafeScale`); and "zero dependencies" is scoped to the generated HTML only — the renderers need `npm install` for ajv.
+
+### Fixed
+- **`applyTemplate` slot corruption.** Slot replacement now uses a function replacer, so `$&`, `$'`, `` $` ``, and `$$` in titles or labels no longer corrupt the output.
+- **Lifecycle overlap detection across lanes.** Overlap checks now compare all state pairs across lanes — previously, identical coordinates in different lanes produced zero errors.
+- **Sequence vertical-spacing false positives.** The spacing check now only fires for messages whose horizontal spans actually overlap, eliminating false reports on parallel messages.
+- **Zero values swallowed.** `bias: 0` / `channelX: 0` / `channelY: 0` now use `??` instead of `||`, so schema-legal zero values are respected.
+- **Workflow `fromSide`/`toSide: "auto"`.** Removed from the schema and normalized in code — an explicit `"auto"` used to anchor edges to the wrong side.
+- **Route enums converged.** Workflow drops `drop-right`/`drop-left`/`same-lane` (byte-identical output to `drop`/`straight`); lifecycle drops `raise`, removes the dead `bias` field, and adds `cornerRadius` (the renderer read it but the schema rejected it).
+- **Light-theme exports kept dark swimlanes.** The export pipeline now scans the stylesheet for CSS variables at runtime instead of using a hardcoded list — `--lane-fill`/`--lane-stroke` were slipping through, and newly added variables can no longer be missed.
+- **Safari Copy PNG.** `ClipboardItem` is now constructed synchronously inside the user gesture (with a `Promise<Blob>` value), with a fallback path.
+- **`localStorage` guarded.** All access is wrapped in try/catch, so disabled storage no longer takes down theme, export, and keyboard shortcuts together.
+- **Print palette completed.** Print styles now carry a full light palette (no more neon strokes when printing from the dark theme), and the footer keyboard-shortcut hints are hidden in print.
+- **Stale `archify.zip`.** Rebuilt — it had fallen 3 commits behind and was missing `renderers/shared/` and `package.json`; CI now enforces zip freshness.
 
 ## [2.4.0] — 2026-04-18
 

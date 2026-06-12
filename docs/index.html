@@ -131,6 +131,8 @@
     .step-num { width:48px; height:48px; border-radius:50%; border:1px solid var(--border-hi); display:flex; align-items:center; justify-content:center; font-size:.8125rem; font-weight:700; color:var(--cyan); background:var(--bg); flex-shrink:0; position:relative; z-index:1; }
     .step-content h4 { font-size:.9375rem; font-weight:600; letter-spacing:-.02em; color:var(--text); margin-bottom:.5rem; padding-top:.75rem; }
     .step-content p { font-size:.8125rem; color:var(--muted); line-height:1.7; text-wrap:pretty; }
+    .step-content a { color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(34,211,238,.4); transition:border-color .15s; }
+    .step-content a:hover { border-bottom-color:var(--cyan); }
 
     /* CODE BLOCK */
     .code-block { background:rgba(15,23,42,.8); border:1px solid var(--border-hi); border-radius:.75rem; overflow:hidden; }
@@ -214,7 +216,7 @@
     <div class="container">
       <div class="hero-badge fade-up">
         <div class="pulse-dot"></div>
-        <span data-i18n="hero-badge">Claude Skill &nbsp;·&nbsp; v2.4.0</span>
+        <span data-i18n="hero-badge">Claude Skill &nbsp;·&nbsp; v2.6.0</span>
       </div>
       <h1 class="fade-up d1" data-i18n="hero-h1">From plain English<br>to architecture <em>in seconds.</em></h1>
       <p class="hero-sub fade-up d2" data-i18n="hero-sub">Describe your system in chat. Archify generates a polished, self-contained HTML diagram — with dark/light themes, clipboard copy, and ultra-crisp 4× export built in.</p>
@@ -247,6 +249,7 @@
         </div>
         <div class="type-tabs fade-up d2">
           <button class="type-tab active" data-type="arch" data-i18n="tab-arch">Architecture</button>
+          <button class="type-tab" data-type="wf" data-i18n="tab-wf">Workflow</button>
           <button class="type-tab" data-type="seq" data-i18n="tab-seq">Sequence</button>
           <button class="type-tab" data-type="flow" data-i18n="tab-flow">Data Flow</button>
           <button class="type-tab" data-type="life" data-i18n="tab-life">Lifecycle</button>
@@ -266,6 +269,20 @@
             </ul>
           </div>
           <div class="type-img-wrap"><img src="assets/archify-dark.png" alt="Architecture diagram"></div>
+        </div>
+
+        <div class="type-panel fade-up" data-type="wf">
+          <div class="type-info">
+            <h3 data-i18n="wf-h">Workflow</h3>
+            <p data-i18n="wf-p">Swim-lane processes with semantic nodes and anchored edges — approval gates, async branches, and observability paths, lane by lane.</p>
+            <ul class="type-use-cases">
+              <li data-i18n="wf-li1">CI/CD pipelines</li>
+              <li data-i18n="wf-li2">Incident runbooks</li>
+              <li data-i18n="wf-li3">Agent tool-call flows</li>
+              <li data-i18n="wf-li4">Approval &amp; async paths</li>
+            </ul>
+          </div>
+          <div class="type-img-wrap"><img src="assets/archify-workflow.png" alt="Workflow diagram"></div>
         </div>
 
         <div class="type-panel fade-up" data-type="seq">
@@ -336,7 +353,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#34d399" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><polyline points="7 10 12 15 17 10" stroke="#34d399" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="15" x2="12" y2="3" stroke="#34d399" stroke-width="1.75" stroke-linecap="round"/></svg>
           </div>
           <h3 data-i18n="f2-h">Ultra-crisp 4× export</h3>
-          <p data-i18n="f2-p">PNG, JPEG, WebP — all rasterized natively at 4× source resolution by the browser. No upsampling blur. Sharp on retina displays, slides, and print.</p>
+          <p data-i18n="f2-p">PNG, JPEG, WebP — all rasterized natively at up to 4× source resolution by the browser. No upsampling blur. Sharp on retina displays, slides, and print.</p>
           <span class="feature-tag" style="background:rgba(52,211,153,0.1);color:var(--emerald)" data-i18n="f2-tag">PNG · JPEG · WEBP</span>
         </div>
         <div class="feature-card fade-up d2">
@@ -451,7 +468,7 @@
               <div class="step-num">1</div>
               <div class="step-content">
                 <h4 data-i18n="step1-h">Install the Skill</h4>
-                <p data-i18n="step1-p">Download archify.zip, go to Claude Settings → Capabilities → Skills, click + Add and upload it. Or unzip to ~/.claude/skills/ for CLI use.</p>
+                <p data-i18n="step1-p">Download <a href="https://github.com/tt-a1i/archify/raw/main/archify.zip">archify.zip</a>, go to Claude Settings → Capabilities → Skills, click + Add and upload it. Or unzip to ~/.claude/skills/ for CLI use.</p>
               </div>
             </div>
             <div class="step fade-up d2">
@@ -536,7 +553,7 @@ this description.</span>
           <svg width="22" height="22" viewBox="0 0 28 28" fill="none"><polygon points="14,2 26,8 26,20 14,26 2,20 2,8" fill="rgba(8,51,68,0.7)" stroke="#22d3ee" stroke-width="1.5"/><circle cx="14" cy="15" r="2.5" fill="#22d3ee"/></svg>
           <span style="font-size:.8125rem;font-weight:700;color:var(--muted)">Archify</span>
         </a>
-        <p class="footer-meta" data-i18n="footer-meta">v2.4.0 &nbsp;·&nbsp; MIT License<br>Based on Cocoon-AI/architecture-diagram-generator</p>
+        <p class="footer-meta" data-i18n="footer-meta">v2.6.0 &nbsp;·&nbsp; MIT License<br>Based on Cocoon-AI/architecture-diagram-generator</p>
       </div>
       <div class="footer-links">
         <a href="https://github.com/tt-a1i/archify" target="_blank" rel="noopener">GitHub</a>
@@ -553,17 +570,20 @@ this description.</span>
   const LANGS = {
     en: {
       'nav-docs':'Docs','nav-install':'Install Skill',
-      'hero-badge':'Claude Skill &nbsp;·&nbsp; v2.4.0',
+      'hero-badge':'Claude Skill &nbsp;·&nbsp; v2.6.0',
       'hero-h1':'From plain English<br>to architecture <em>in seconds.</em>',
       'hero-sub':'Describe your system in chat. Archify generates a polished, self-contained HTML diagram — with dark/light themes, clipboard copy, and ultra-crisp 4× export built in.',
       'hero-cta':'Get started','hero-gh':'View on GitHub',
       'label-types':'Diagram Types',
       'types-h2':'Five ways to see your system.',
       'types-body':'Architecture, workflows, sequences, data flows, or state machines — describe what you need and Archify picks the right visual language.',
-      'tab-arch':'Architecture','tab-seq':'Sequence','tab-flow':'Data Flow','tab-life':'Lifecycle',
+      'tab-arch':'Architecture','tab-wf':'Workflow','tab-seq':'Sequence','tab-flow':'Data Flow','tab-life':'Lifecycle',
       'arch-h':'Architecture',
       'arch-p':'System components, cloud resources, databases, caches, services, security groups, and the connections between them.',
       'arch-li1':'AWS / GCP / Azure infra','arch-li2':'Microservices topology','arch-li3':'Security boundaries','arch-li4':'Network layout',
+      'wf-h':'Workflow',
+      'wf-p':'Swim-lane processes with semantic nodes and anchored edges — approval gates, async branches, and observability paths, lane by lane.',
+      'wf-li1':'CI/CD pipelines','wf-li2':'Incident runbooks','wf-li3':'Agent tool-call flows','wf-li4':'Approval & async paths',
       'seq-h':'Sequence',
       'seq-p':'API call chains, request lifecycles, cache fallback paths, auth checks, async traces — who calls whom, in what order, and what returns.',
       'seq-li1':'API request / response','seq-li2':'Cache miss fallback','seq-li3':'Auth & JWT flow','seq-li4':'Async trace emit',
@@ -576,7 +596,7 @@ this description.</span>
       'label-features':'Features',
       'features-h2':'Production-ready output,<br>zero configuration.',
       'f1-h':'One-click theme toggle','f1-p':'Every diagram ships with dark and light themes. Toggle with a click or press T. Persists to localStorage, respects prefers-color-scheme on first visit.','f1-tag':'DARK & LIGHT',
-      'f2-h':'Ultra-crisp 4× export','f2-p':'PNG, JPEG, WebP — all rasterized natively at 4× source resolution by the browser. No upsampling blur. Sharp on retina displays, slides, and print.','f2-tag':'PNG · JPEG · WEBP',
+      'f2-h':'Ultra-crisp 4× export','f2-p':'PNG, JPEG, WebP — all rasterized natively at up to 4× source resolution by the browser. No upsampling blur. Sharp on retina displays, slides, and print.','f2-tag':'PNG · JPEG · WEBP',
       'f3-h':'Dual-theme SVG','f3-p':"The SVG export ships with both variable sets plus a @media prefers-color-scheme rule. Drop one file into a GitHub README — it follows the reader's theme.",'f3-tag':'VECTOR · SELF-THEMED',
       'f4-h':'Copy to clipboard','f4-p':'One button puts a PNG straight on your clipboard. Paste directly into Slack, Notion, GitHub, or Figma — no intermediate save step.','f4-tag':'INSTANT SHARE',
       'f5-h':'Self-contained HTML','f5-p':'One HTML file. Zero dependencies, no server, no runtime. Open it in any browser and it works. Share by attaching it to an email or PR comment.','f5-tag':'ZERO DEPS',
@@ -596,27 +616,30 @@ this description.</span>
       'label-qs':'Quick Start',
       'qs-h2':'Up and running<br>in three steps.',
       'qs-body':'Requires Claude Pro, Max, Team, or Enterprise — or Claude Code CLI.',
-      'step1-h':'Install the Skill','step1-p':'Download archify.zip, go to Claude Settings → Capabilities → Skills, click + Add and upload it. Or unzip to ~/.claude/skills/ for CLI use.',
+      'step1-h':'Install the Skill','step1-p':'Download <a href="https://github.com/tt-a1i/archify/raw/main/archify.zip">archify.zip</a>, go to Claude Settings → Capabilities → Skills, click + Add and upload it. Or unzip to ~/.claude/skills/ for CLI use.',
       'step2-h':'Describe your system','step2-p':'Write a plain-English description of your architecture — components, connections, cloud services. Or ask Claude to analyze your codebase first.',
       'step3-h':'Ask Claude to draw it','step3-p':'Tell Claude to use the Archify skill. It generates a self-contained HTML file you open in any browser. Iterate from there — in plain English.',
       'code-label':'example prompt',
       'kbd-label':'Keyboard shortcuts','kbd-theme':'Toggle theme','kbd-export':'Open export menu','kbd-nav':'Navigate menu','kbd-close':'Close menu',
-      'footer-meta':'v2.4.0 &nbsp;·&nbsp; MIT License<br>Based on Cocoon-AI/architecture-diagram-generator',
+      'footer-meta':'v2.6.0 &nbsp;·&nbsp; MIT License<br>Based on Cocoon-AI/architecture-diagram-generator',
       'footer-changelog':'Changelog','footer-license':'License'
     },
     zh: {
       'nav-docs':'文档','nav-install':'安装技能',
-      'hero-badge':'Claude 技能 &nbsp;·&nbsp; v2.4.0',
+      'hero-badge':'Claude 技能 &nbsp;·&nbsp; v2.6.0',
       'hero-h1':'用自然语言，<br>秒级生成<em>架构图。</em>',
       'hero-sub':'在对话中描述你的系统，Archify 生成精美、独立的 HTML 架构图——内置深色/浅色主题、一键复制剪贴板、超清 4× 图片导出。',
       'hero-cta':'快速开始','hero-gh':'在 GitHub 查看',
       'label-types':'图表类型',
       'types-h2':'五种方式，读懂你的系统。',
       'types-body':'架构图、工作流、时序图、数据流图、状态机——描述需求，Archify 自动选择最合适的可视化语言。',
-      'tab-arch':'架构图','tab-seq':'时序图','tab-flow':'数据流图','tab-life':'生命周期图',
+      'tab-arch':'架构图','tab-wf':'工作流图','tab-seq':'时序图','tab-flow':'数据流图','tab-life':'生命周期图',
       'arch-h':'架构图',
       'arch-p':'系统组件、云资源、数据库、缓存、服务、安全组及其连接关系，一图清晰呈现。',
       'arch-li1':'AWS / GCP / Azure 基础设施','arch-li2':'微服务拓扑','arch-li3':'安全边界','arch-li4':'网络布局',
+      'wf-h':'工作流图',
+      'wf-p':'泳道式流程：语义化节点与锚定连线——审批门、异步分支、观测路径，逐泳道清晰铺开。',
+      'wf-li1':'CI/CD 流水线','wf-li2':'事故处置 Runbook','wf-li3':'Agent 工具调用流','wf-li4':'审批与异步路径',
       'seq-h':'时序图',
       'seq-p':'API 调用链、请求生命周期、缓存回退路径、鉴权检查、异步追踪——谁调用谁、顺序如何、返回什么。',
       'seq-li1':'API 请求 / 响应','seq-li2':'缓存未命中回退','seq-li3':'Auth & JWT 流程','seq-li4':'异步 Trace 上报',
@@ -629,7 +652,7 @@ this description.</span>
       'label-features':'功能特性',
       'features-h2':'生产级输出，<br>零配置。',
       'f1-h':'一键切换主题','f1-p':'每张图内置深色和浅色两套主题。点击按钮或按 T 键切换，自动持久化，首次访问遵循系统颜色偏好。','f1-tag':'深色 & 浅色',
-      'f2-h':'超清 4× 导出','f2-p':'PNG、JPEG、WebP——由浏览器以 4 倍分辨率原生栅格化，无上采样模糊。视网膜屏、幻灯片、印刷均清晰。','f2-tag':'PNG · JPEG · WEBP',
+      'f2-h':'超清 4× 导出','f2-p':'PNG、JPEG、WebP——由浏览器以最高 4 倍分辨率原生栅格化，无上采样模糊。视网膜屏、幻灯片、印刷均清晰。','f2-tag':'PNG · JPEG · WEBP',
       'f3-h':'双主题 SVG','f3-p':'SVG 导出同时内置深色和浅色变量集，并附 @media prefers-color-scheme 规则。放入 GitHub README，自动跟随读者主题。','f3-tag':'矢量 · 自适应主题',
       'f4-h':'复制到剪贴板','f4-p':'一键将 PNG 写入剪贴板，直接粘贴到 Slack、Notion、GitHub 或 Figma，无需手动保存。','f4-tag':'即时分享',
       'f5-h':'独立 HTML 文件','f5-p':'单个 HTML 文件，零依赖、无需服务器或构建工具，任意浏览器打开即用。作为附件发邮件或贴 PR 评论均可。','f5-tag':'零依赖',
@@ -649,12 +672,12 @@ this description.</span>
       'label-qs':'快速开始',
       'qs-h2':'三步上手，<br>即刻运行。',
       'qs-body':'需要 Claude Pro、Max、Team 或 Enterprise 计划，或 Claude Code CLI。',
-      'step1-h':'安装技能','step1-p':'下载 archify.zip，进入 Claude 设置 → 能力 → 技能，点击「+ 添加」上传。或解压至 ~/.claude/skills/ 供 CLI 使用。',
+      'step1-h':'安装技能','step1-p':'下载 <a href="https://github.com/tt-a1i/archify/raw/main/archify.zip">archify.zip</a>，进入 Claude 设置 → 能力 → 技能，点击「+ 添加」上传。或解压至 ~/.claude/skills/ 供 CLI 使用。',
       'step2-h':'描述你的系统','step2-p':'用自然语言描述你的架构——组件、连接关系、云服务。也可以先让 Claude 分析你的代码仓库。',
       'step3-h':'让 Claude 绘制','step3-p':'告诉 Claude 使用 Archify 技能，它会生成独立的 HTML 文件，用任意浏览器打开即可。然后继续用自然语言迭代。',
       'code-label':'示例提示词',
       'kbd-label':'键盘快捷键','kbd-theme':'切换主题','kbd-export':'打开导出菜单','kbd-nav':'菜单导航','kbd-close':'关闭菜单',
-      'footer-meta':'v2.4.0 &nbsp;·&nbsp; MIT 许可证<br>基于 Cocoon-AI/architecture-diagram-generator',
+      'footer-meta':'v2.6.0 &nbsp;·&nbsp; MIT 许可证<br>基于 Cocoon-AI/architecture-diagram-generator',
       'footer-changelog':'更新日志','footer-license':'许可证'
     }
   };

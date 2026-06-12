@@ -1,226 +1,205 @@
 ---
 name: archify
-description: Create professional architecture, workflow, sequence, data-flow, and lifecycle/state diagrams as standalone HTML files with SVG graphics, a built-in dark/light theme toggle, and one-click export to PNG / JPEG / WebP / SVG. Use when the user asks for system architecture diagrams, infrastructure diagrams, cloud architecture visualizations, security diagrams, network topology diagrams, technical workflows, approval flows, runbooks, CI/CD flows, process diagrams, API call sequences, request lifecycles, interaction diagrams, data pipelines, analytics flows, ETL/ELT maps, PII boundaries, governance/data lineage diagrams, state machines, lifecycle diagrams, status transitions, or terminal/retry paths.
+description: Create professional architecture, workflow, sequence, data-flow, and lifecycle/state diagrams as standalone HTML files with SVG graphics, a built-in dark/light theme toggle, and one-click export to PNG / JPEG / WebP / SVG. Accepts plain-language descriptions or pasted Mermaid code (flowchart, sequenceDiagram, stateDiagram) and lays the diagram out from scratch in archify style. Use when the user asks for system architecture diagrams, infrastructure diagrams, cloud architecture visualizations, security diagrams, network topology, technical workflows, approval flows, runbooks, CI/CD flows, process diagrams, API call sequences, request lifecycles, data pipelines, ETL/ELT maps, PII boundaries, data lineage, state machines, lifecycle diagrams, status transitions, or asks to convert/beautify a Mermaid diagram.
 license: MIT
 metadata:
-  version: "2.4"
+  version: "2.6"
   author: tt-a1i
   based_on: Cocoon-AI/architecture-diagram-generator (MIT, v1.0)
 ---
 
 # Archify Skill
 
-Create professional technical diagrams as self-contained HTML files with inline SVG, a theme toggle, and a built-in image/SVG export menu. No external runtime dependencies beyond Google Fonts.
+Create professional technical diagrams as self-contained HTML files with inline SVG, a theme toggle, and a built-in image/SVG export menu.
 
-Every diagram this skill produces ships with:
+Every diagram ships with a **dark/light theme toggle** (persists in `localStorage`, respects `prefers-color-scheme`), an **export menu** (copy PNG to clipboard; download PNG/JPEG/WebP rasterized natively at up to 4× resolution; download a **dual-theme SVG** that follows the embedding host's `prefers-color-scheme` — ideal for GitHub READMEs), and a **CSS-variable color system** that keeps both themes consistent.
 
-- A **Dark / Light theme toggle** (top-right, persists in `localStorage`, respects `prefers-color-scheme` on first visit).
-- An **Export menu** with **Copy PNG to clipboard** plus downloads for **PNG / JPEG / WebP** (all rasterized natively at 4× source resolution for maximum sharpness) and **SVG** (vector, styles inlined). The SVG download is **dual-theme self-contained**: it ships with both dark and light variable sets plus a `@media (prefers-color-scheme)` rule, so embedding it in a GitHub README (or any `<img>` host that exposes a color scheme) makes it follow the reader's dark/light preference automatically. All rendering happens in-browser, no server.
-- A **CSS-variable-driven color system** so both themes remain visually consistent with the same SVG markup.
+## Setup (one-time, renderer modes only)
 
-## Diagram Types
+The four typed renderers validate JSON against schemas via `ajv`. From this skill's folder:
 
-Archify supports five technical diagram modes:
+```bash
+npm install
+```
 
-| Type | Use for | Output path |
-|------|---------|-------------|
-| `architecture` | System components, cloud resources, services, storage, security boundaries, and infrastructure relationships | Hand-place SVG components inside `assets/template.html` |
-| `workflow` | Technical flows, request lifecycles, approval gates, tool calls, runbooks, CI/CD paths, incident response, and process ownership | Prefer `renderers/workflow/render-workflow.mjs` with a workflow JSON file |
-| `sequence` | API calls, request lifecycles, service interactions, cache fallback paths, async trace/logging, and return paths over time | Prefer `renderers/sequence/render-sequence.mjs` with a sequence JSON file |
-| `dataflow` | Data pipelines, ETL/ELT, analytics flows, PII isolation, governance boundaries, lineage, warehouse sync, and downstream consumers | Prefer `renderers/dataflow/render-dataflow.mjs` with a data-flow JSON file |
-| `lifecycle` | State machines, object lifecycles, run/order/deployment status transitions, wait states, retries, terminal states, and recovery paths | Prefer `renderers/lifecycle/render-lifecycle.mjs` with a lifecycle JSON file |
+Without it the renderers still run — they print a warning and skip schema validation, keeping their own layout checks. The **generated HTML never has dependencies**; only the renderers do.
 
-When the user says "architecture", "system diagram", "cloud diagram", or asks to understand a codebase structure, use the `architecture` mode unless the requested output is clearly process-oriented.
+If you have no shell access at all (e.g. the skill was added as project knowledge), fall back to architecture mode for every request: hand-place SVG into `assets/template.html` following the Design System below, and run the self-review checklist before delivering.
 
-When the user says "workflow", "flow", "process", "runbook", "sequence of steps", "approval", "CI/CD", "incident", or asks how work moves through actors/systems over time, use the `workflow` mode.
+## Choosing a Diagram Type
 
-When the user says "sequence", "interaction", "call sequence", "request lifecycle", "API call chain", "who calls whom", or asks how multiple participants interact over time, use the `sequence` mode.
+| Type | Use for | How |
+|------|---------|-----|
+| `architecture` | System components, cloud resources, services, security boundaries, infrastructure | `renderers/architecture/render-architecture.mjs` + JSON (or hand-place SVG when renderers can't run) |
+| `workflow` | Technical flows, approval gates, tool calls, runbooks, CI/CD, incident response | `renderers/workflow/render-workflow.mjs` + JSON |
+| `sequence` | API call chains, request lifecycles, cache fallback, async traces, return paths | `renderers/sequence/render-sequence.mjs` + JSON |
+| `dataflow` | Pipelines, ETL/ELT, PII isolation, lineage, warehouse sync, consumers | `renderers/dataflow/render-dataflow.mjs` + JSON |
+| `lifecycle` | State machines, status transitions, wait states, retries, terminal states | `renderers/lifecycle/render-lifecycle.mjs` + JSON |
 
-When the user says "data flow", "pipeline", "ETL", "ELT", "lineage", "analytics", "warehouse", "PII", "consent", "governance", or asks where data comes from, how it is transformed, and who consumes it, use the `dataflow` mode.
+Trigger phrases: "architecture/system/cloud diagram" → `architecture` (unless clearly process-oriented). "workflow/flow/process/runbook/approval/CI-CD/incident" → `workflow`. "sequence/interaction/call chain/who calls whom" → `sequence`. "data flow/pipeline/ETL/lineage/PII/governance" → `dataflow`. "state/status/lifecycle/state machine/retry/terminal" → `lifecycle`.
 
-When the user says "state", "status", "lifecycle", "state machine", "terminal", "retry", "cancel", "timeout", "order lifecycle", "deployment lifecycle", "agent run lifecycle", or asks how an object changes state over time, use the `lifecycle` mode.
+## Mermaid as an Input Dialect
 
-### Schema Validation (all renderer modes)
+When the user pastes Mermaid code, do NOT try to render or parse it mechanically — read it for structure and **lay out from scratch** in the matching archify mode:
 
-Every JSON file is validated against its schema (`archify/schemas/*.schema.json`) before any layout work runs. Schema violations exit non-zero with a path-prefixed error message — for example `/cards/0/dot must be equal to one of the allowed values ["cyan","emerald","violet","amber","rose","orange","slate"]` or `/nodes/0/id must match pattern "^[a-zA-Z][a-zA-Z0-9_-]*$"`. Common things the schema catches before the renderer touches the file:
+| Mermaid | Archify mode | Mapping |
+|---------|--------------|---------|
+| `flowchart` / `graph` | `workflow` (or `architecture` if it's a component map) | `subgraph` → lane or region boundary; node shape `{}` (diamond) → decision/security node; `-->` labels → edge labels (use sparingly); `classDef`/`style` → nearest semantic type |
+| `sequenceDiagram` | `sequence` | `participant` → participants (pick semantic `type` from the name); `->>` → message, `-->>` → `return` variant; `Note` → message `note`; `rect` blocks → segments |
+| `stateDiagram` | `lifecycle` | states → states (pick `start`/`active`/`waiting`/`success`/`failure` from names); `[*]` start/end → `start` type / `terminal` lane; transition labels → event-like labels |
 
-- Unknown node/participant/state `type`, unknown card `dot`
-- IDs containing spaces or starting with a digit
-- Extra/misspelled fields (`additionalProperties: false` is set on every object)
-- Missing required fields (`label`, `meta.title`, etc.)
-- `schema_version` not equal to `1`
+Drop Mermaid styling; keep only the topology and meaning. You choose grouping, lane order, and what deserves emphasis — that judgment is the product.
 
-If a render fails with a schema error, fix the JSON and re-run; do not edit the renderer.
+## Renderer Modes (workflow / sequence / dataflow / lifecycle)
 
-### Workflow Mode
+All four modes follow the same loop:
 
-Workflow diagrams use a compact JSON IR:
+1. **Read first**: the schema (`schemas/<type>.schema.json`) and the complete worked example (`examples/*.{workflow,sequence,dataflow,lifecycle}.json`) — copy its patterns instead of guessing field shapes.
+2. Write `<name>.<type>.json`.
+3. Render: `node renderers/<type>/render-<type>.mjs <input>.json <output>.html` (paths relative to this skill's folder).
+4. If it fails, the error names the JSON path or the fix (thresholds, valid ranges, which knob to change). Fix the JSON and re-run; never edit the renderer.
+
+Schema violations exit non-zero with path-prefixed messages like `/nodes/3 (id/label: "router") must NOT have additional properties`. The renderers additionally fail fast on layout problems: node/state overlap (including cross-lane), labels colliding with nodes or other labels, labels wider than their node, out-of-range columns/rows, too-short edges, and legends outside the viewBox. CJK text is measured at double width automatically.
+
+### Workflow
 
 ```json
 {
   "schema_version": 1,
   "diagram_type": "workflow",
-  "meta": {
-    "title": "Release Workflow",
-    "subtitle": "PR to production deployment",
-    "output": "release-workflow.html",
-    "viewBox": [720, 780]
-  },
-  "lanes": [
-    { "id": "dev", "label": "Developer" },
-    { "id": "ci", "label": "CI" }
+  "meta": { "title": "Release Workflow", "subtitle": "PR to production", "output": "release.html" },
+  "lanes": [ { "id": "dev", "label": "Developer" }, { "id": "ci", "label": "CI" } ],
+  "nodes": [
+    { "id": "pr", "lane": "dev", "col": 0, "type": "frontend", "label": "Open PR", "sublabel": "feature branch" },
+    { "id": "build", "lane": "ci", "col": 1, "type": "backend", "label": "Build", "sublabel": "lint + test", "tag": "blocking" }
   ],
-  "nodes": [],
-  "edges": [],
+  "edges": [
+    { "from": "pr", "to": "build", "label": "webhook", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "drop" }
+  ],
   "cards": []
 }
 ```
 
-If you have filesystem/tool access, create a workflow JSON file and render it with:
+**Layout budget**: 6 columns (`col` 0–5) at fixed x positions `[88, 220, 300, 430, 500, 625]` — columns 1↔2 and 3↔4 are only 70–80px apart, so default-width (92px) nodes in those adjacent columns of the same lane overlap; skip a column or shrink `width`. Lane content width is 640px. Omit `meta.viewBox` — the renderer sizes height to the lane count automatically. Edge routes: `straight`, `drop` (bend between lanes; `bias` 0–1 picks where), `outside-right`, `return-left`, `bottom-channel`, `up-channel`, or explicit `via` points. Keep adjacent-step edges unlabeled; reserve labels for cross-lane transitions, approvals, async writes, and returns.
 
-```bash
-node archify/renderers/workflow/render-workflow.mjs workflow.json workflow.html
-```
-
-The renderer:
-
-- Places nodes by lane + column instead of raw SVG coordinates
-- Routes edges through explicit anchors and orthogonal route presets
-- Uses `c-lane` swimlanes plus the normal semantic component classes
-- Adds a `c-mask` label background for routed labels
-- Fails fast on schema violations, overlapping nodes, out-of-lane placement, and labeled short links — keep adjacent-step labels minimal in the JSON to avoid the short-link error
-
-Use workflow labels sparingly. Adjacent steps should often be unlabeled; reserve labels for cross-lane transitions, approval decisions, async trace writes, and return paths.
-
-### Sequence Mode
-
-Sequence diagrams use a compact JSON IR:
+### Sequence
 
 ```json
 {
   "schema_version": 1,
   "diagram_type": "sequence",
-  "meta": {
-    "title": "Cache Miss Request Sequence",
-    "subtitle": "Frontend request path with auth and cache fallback",
-    "output": "cache-miss-request.html",
-    "viewBox": [820, 760]
-  },
+  "meta": { "title": "Cache Miss Request", "subtitle": "auth and cache fallback", "output": "cache-miss.html" },
   "participants": [
     { "id": "web", "type": "frontend", "label": "Web App", "sublabel": "React UI" },
-    { "id": "api", "type": "backend", "label": "API", "sublabel": "request handler" }
+    { "id": "api", "type": "backend", "label": "API", "sublabel": "handler" }
   ],
-  "messages": [],
-  "activations": [],
+  "segments": [ { "from": 160, "to": 320, "label": "01 / AUTH" } ],
+  "messages": [
+    { "from": "web", "to": "api", "y": 200, "label": "GET /data", "variant": "emphasis" },
+    { "from": "api", "to": "web", "y": 290, "label": "200 JSON", "variant": "return" }
+  ],
+  "activations": [ { "participant": "api", "from": 190, "to": 300, "type": "backend" } ],
   "cards": []
 }
 ```
 
-If you have filesystem/tool access, create a sequence JSON file and render it with:
+**Layout budget**: participants sit at x = 62 + index×108, so a 920-wide viewBox fits at most 8. Message `y` must stay within `[160, viewBox_height − 83]`; messages that share horizontal space need ≥28px vertical separation; arrows need ≥60px horizontal span. `segments[].from/to` and `activations[].from/to` are **y pixel coordinates**, not participant ids. A taller `meta.viewBox` (default `[920, 760]`) buys more timeline room. Keep labels short: "GET /path", "verify JWT", "cache miss", "200 JSON".
 
-```bash
-node archify/renderers/sequence/render-sequence.mjs sequence.json sequence.html
-```
-
-The renderer:
-
-- Places participants across the top and time downward
-- Uses semantic message variants: `emphasis`, `security`, `return`, and `dashed`
-- Uses activation bars to show ownership duration
-- Uses light segment bands as story landmarks
-- Fails fast on schema violations, overflowing participants, unknown message endpoints, and rows that are too tight
-
-Use sequence diagrams when the important thing is order over time. Keep labels short; prefer "GET /path", "verify JWT", "cache miss", "emit trace", and "200 JSON" over prose sentences.
-
-### Data-flow Mode
-
-Data-flow diagrams use a compact JSON IR:
+### Dataflow
 
 ```json
 {
   "schema_version": 1,
   "diagram_type": "dataflow",
-  "meta": {
-    "title": "Product Analytics Data Flow",
-    "subtitle": "Events, consent, PII isolation, warehouse sync, and consumers",
-    "output": "product-analytics.html",
-    "viewBox": [900, 720]
-  },
-  "stages": [
-    { "label": "Sources" },
-    { "label": "Ingest" },
-    { "label": "Process" },
-    { "label": "Store" },
-    { "label": "Consume" }
+  "meta": { "title": "Product Analytics", "subtitle": "events to consumers", "output": "analytics.html" },
+  "stages": [ { "label": "Sources" }, { "label": "Ingest" }, { "label": "Store" } ],
+  "nodes": [
+    { "id": "web", "type": "frontend", "label": "Web App", "stage": 0, "row": 0, "sublabel": "clickstream" },
+    { "id": "kafka", "type": "messagebus", "label": "Kafka", "stage": 1, "row": 0, "tag": "accepted events" }
   ],
-  "nodes": [],
-  "flows": [],
+  "flows": [
+    { "from": "web", "to": "kafka", "label": "events", "classification": "PII touch", "variant": "emphasis" }
+  ],
   "cards": []
 }
 ```
 
-If you have filesystem/tool access, create a data-flow JSON file and render it with:
+**Layout budget**: 2–5 stages at x = 100 + stage×215; 5 rows (`row` 0–4) at y `[128, 242, 356, 470, 584]`; default node 112×58. Default viewBox `[940, 720]`. Flow labels are mandatory and asset-like ("clickstream", "identity map", "feature vectors"); put sensitivity in `classification` ("PII touch", "approved only", "non-PII"). Variants: `emphasis` = primary path, `security` = PII/policy/consent, `dashed` = async/batch.
 
-```bash
-node archify/renderers/dataflow/render-dataflow.mjs dataflow.json dataflow.html
-```
-
-The renderer:
-
-- Places nodes by lifecycle stage + row
-- Uses vertical stage bands for source, ingest, process, store, and consume boundaries
-- Uses flow labels to name data assets, plus optional `classification` for PII/governance context
-- Uses semantic variants: `emphasis` for the primary data path, `security` for PII/policy/consent/restricted joins, and `dashed` for async or batch derivations
-- Fails fast on schema violations, node overlap, stage overflow, unknown flow endpoints, missing labels, and unreadably short arrows
-
-Use data-flow diagrams when the important thing is data lineage and governance. Keep labels asset-like: "clickstream", "identity map", "normalized facts", "feature vectors", "restricted join". Put sensitivity in `classification`: "PII touch", "encrypted PII", "approved only", "non-PII", "read-only".
-
-### Lifecycle Mode
-
-Lifecycle diagrams use a compact JSON IR:
+### Lifecycle
 
 ```json
 {
   "schema_version": 1,
   "diagram_type": "lifecycle",
-  "meta": {
-    "title": "Agent Run Lifecycle",
-    "subtitle": "State machine for planning, execution, waits, retries, and terminal outcomes",
-    "output": "agent-run.html",
-    "viewBox": [980, 720]
-  },
+  "meta": { "title": "Agent Run Lifecycle", "subtitle": "states and terminal outcomes", "output": "agent-run.html" },
   "lanes": [
-    { "id": "main", "label": "Main lifecycle" },
-    { "id": "waiting", "label": "Wait states" },
-    { "id": "exceptions", "label": "Exceptions + recovery" }
+    { "id": "main", "label": "Lifecycle phases" },
+    { "id": "waiting", "label": "Interruptions" },
+    { "id": "terminal", "label": "Terminal exits" }
   ],
-  "states": [],
-  "transitions": [],
+  "states": [
+    { "id": "queued", "type": "start", "label": "Queued", "lane": "main", "col": 0, "step": "01" },
+    { "id": "running", "type": "active", "label": "Executing", "lane": "main", "col": 2, "step": "02" },
+    { "id": "approval", "type": "waiting", "label": "Needs Approval", "lane": "waiting", "col": 0 },
+    { "id": "done", "type": "success", "label": "Completed", "lane": "terminal", "col": 2 }
+  ],
+  "transitions": [
+    { "from": "queued", "to": "running", "variant": "emphasis" },
+    { "from": "running", "to": "approval", "label": "needs approval", "variant": "security", "fromSide": "bottom", "toSide": "right" },
+    { "from": "running", "to": "done", "label": "success", "variant": "emphasis", "fromSide": "bottom", "toSide": "top" }
+  ],
   "cards": []
 }
 ```
 
-If you have filesystem/tool access, create a lifecycle JSON file and render it with:
+**Layout budget — lane ids are semantic and reserved**: `main` is required and maps to the top phase band (cols 0–4); `terminal` maps to the bottom outcome band (cols 0–2); **every other lane id shares the single middle event band** (cols 0–2) — separate same-band states with different `col` or `yOffset`. Band headers render from your lane labels. Default viewBox `[980, 660]`. Keep transition labels event-like and sparse ("retry", "timeout", "cancel"); prefer state `tag`s, `step` numbers, and summary cards over label-heavy arrows. Put terminal states in the `terminal` lane so endings are unambiguous.
 
-```bash
-node archify/renderers/lifecycle/render-lifecycle.mjs lifecycle.json lifecycle.html
+### Per-mode deep guidance
+
+Each renderer has a README with its full design language (route presets, semantic types, story guidance): `renderers/workflow/README.md`, `renderers/sequence/README.md`, `renderers/dataflow/README.md`, `renderers/lifecycle/README.md`. Read the matching one before your first diagram of that mode in a session.
+
+## Architecture Mode
+
+Architecture has the same read-schema-then-render loop as the other modes — prefer it. Hand-placed SVG is the fallback for when renderers can't run.
+
+```json
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": { "title": "Sample Web App", "subtitle": "3-tier SaaS on AWS", "output": "web-app.html" },
+  "components": [
+    { "id": "users", "type": "external", "label": "Users", "sublabel": "Browser", "pos": [40, 300] },
+    { "id": "api", "type": "backend", "label": "API Server", "sublabel": "FastAPI :8000", "pos": [460, 300] },
+    { "id": "db", "type": "database", "label": "PostgreSQL", "sublabel": ":5432", "pos": [680, 300] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "AWS us-west-2", "wraps": ["api", "db"] }
+  ],
+  "connections": [
+    { "from": "users", "to": "api", "label": "HTTPS", "variant": "emphasis" },
+    { "from": "api", "to": "db", "label": "SQL" }
+  ],
+  "cards": []
+}
 ```
 
-The renderer:
+Render: `node renderers/architecture/render-architecture.mjs <input>.json <output>.html`.
 
-- Places states by lane + column
-- Uses lanes to separate the happy path, wait states, and exception/recovery paths
-- Uses semantic state types: `start`, `active`, `waiting`, `decision`, `success`, `failure`, and `neutral`
-- Uses transition variants: `emphasis` for the primary lifecycle, `security` for failure/cancel/timeout/policy paths, and `dashed` for retry/resume paths
-- Fails fast on schema violations, state overlap, out-of-lane placement, unknown lanes, unknown transition endpoints, and legends pushed outside the viewBox
+**The renderer does the mechanical work that used to be hand-tuned**, so you only choose coordinates and meaning:
 
-Use lifecycle diagrams when the important thing is state, not step-by-step work. Keep transition labels event-like: "start", "plan ready", "needs approval", "retry", "timeout", "cancel". Put terminal states on the right or in the bottom lane so endings are visually unambiguous.
+- **Free coordinates** — `pos: [x, y]` is the component's top-left; `size: [w, h]` defaults to `[120, 60]`. Unlike the typed modes there is no lane/stage grid — asymmetric placement is yours to choose. `meta.viewBox` is optional (auto-fitted to your components + a legend row).
+- **Boundaries from `wraps`** — list the component ids a `region` (dashed amber) or `security-group` (dashed rose) encloses; the renderer computes the box with correct 30/50 padding automatically. Never hand-arithmetic a boundary again.
+- **Connections** route like edges (`variant`, `fromSide`/`toSide`, `route: straight|orthogonal-h|orthogonal-v|auto`, `via`, `labelDx/labelDy/labelAt`). For a vertical labeled connection, push the label into the gap with `labelDy` (the validator will tell you if it lands on a box).
+- The renderer auto-emits the two-rect `c-mask` pattern, draws arrows before boxes (z-order), builds the legend from the component types you used, and **fails fast on component overlap, off-canvas components/boundaries, unknown wraps/connection ids, label-vs-component collisions, and non-finite coordinates** — the same reliability the other four modes already had.
 
-## The Cardinal Rule: Use CSS Classes, Not Inline Colors
+### Hand-placed fallback (no renderer available)
 
-The theme toggle works by switching CSS custom properties. If you hardcode `fill="rgba(...)"` or `stroke="#22d3ee"` on SVG elements, those values will NOT update when the theme changes. Always prefer the class-based system.
+When Node/ajv can't run, copy `assets/template.html` and place SVG by hand. Study the worked diagram inside the template and `examples/web-app.html` for coordinate idioms, follow the Design System below, and run the self-review checklist before delivering.
 
-### Do this
+### The Cardinal Rule: CSS classes, not inline colors
+
+The theme toggle works by switching CSS custom properties. Hardcoded `fill="rgba(...)"` or `stroke="#22d3ee"` will NOT update on theme change. Always use the class system:
 
 ```svg
 <rect x="X" y="Y" width="W" height="H" rx="6" class="c-mask"/>
@@ -229,204 +208,29 @@ The theme toggle works by switching CSS custom properties. If you hardcode `fill
 <text x="CX" y="CY+16" class="t-muted" font-size="9" text-anchor="middle">FastAPI :8000</text>
 ```
 
-### Don't do this
+### Design system
 
-```svg
-<!-- Hardcoded colors break the theme toggle -->
-<rect fill="rgba(6, 78, 59, 0.4)" stroke="#34d399" .../>
-<text fill="white" .../>
-```
+Component fills `c-frontend` (clients/UI), `c-backend` (services/APIs), `c-database` (stores/caches), `c-cloud` (managed infra), `c-security` (auth/secrets), `c-messagebus` (Kafka/queues), `c-external` (3rd parties); text accents `t-<same>` plus neutrals `t-primary` / `t-muted` / `t-dim`. Arrows `a-default`, `a-emphasis` (hot path), `a-security` (dashed), `a-dashed` (async) — always set `stroke-width` and pair `marker-end="url(#arrowhead[-variant])"` with the matching class. Boundaries: `c-security-group` (dashed rose), `c-region` (dashed amber), `c-lane` (swimlane).
 
-## Design System
+Typography inherits JetBrains Mono from the SVG root. Sizes: 11–12px component names, 9px sublabels, 8px annotations, 7px tiny labels.
 
-### Component color classes
+### Hard layout rules
 
-| Component Type   | Fill class       | Text color class | When to use                                |
-|------------------|------------------|------------------|--------------------------------------------|
-| Frontend         | `c-frontend`     | `t-frontend`     | Client apps, browsers, mobile, UI          |
-| Backend          | `c-backend`      | `t-backend`      | Services, APIs, workers, daemons           |
-| Database         | `c-database`     | `t-database`     | DBs, caches, log files, data stores        |
-| Cloud / AWS      | `c-cloud`        | `t-cloud`        | Managed cloud services, infra              |
-| Security         | `c-security`     | `t-security`     | Auth providers, secrets, guards            |
-| Message Bus      | `c-messagebus`   | `t-messagebus`   | Kafka/RabbitMQ/SNS/Event buses             |
-| External/Generic | `c-external`     | `t-muted`        | Users, 3rd parties, anything uncategorized |
+- **Two-rect pattern everywhere**: opaque `c-mask` rect first, styled `c-<type>` rect on top — semi-transparent fills otherwise let arrows bleed through.
+- **Arrows before components** in document order (SVG paints in order; arrows must sit behind boxes).
+- **Vertical stacking**: ≥40px gap between components; inline connectors (message buses, 20px tall) live inside the gap, never overlapping boxes.
+- **Boundary padding**: boundary `y` = inner `y` − 30, boundary `height` = inner `height` + 50, label baseline 18px below the boundary top.
+- **Legend placement**: outside ALL boundary boxes, ≥20px below the lowest one; grow the viewBox if needed.
 
-Text on a dark or light background uses three neutral helpers:
+### Self-review checklist (run before delivering)
 
-| Text class  | Role                          |
-|-------------|-------------------------------|
-| `t-primary` | Component names / titles      |
-| `t-muted`   | Sublabels, annotations        |
-| `t-dim`     | Tertiary / footer metadata    |
-
-Per-semantic text accents also exist: `t-frontend`, `t-backend`, `t-database`, `t-cloud`, `t-security`, `t-messagebus`, `t-external` — use when you want a label colored to match its component type (e.g., a small "OAI Protected" caption inside a cloud-type box).
-
-### Arrow classes
-
-| Class         | Marker id                  | Semantic                       |
-|---------------|----------------------------|--------------------------------|
-| `a-default`   | `#arrowhead`               | Standard data/flow arrow       |
-| `a-emphasis`  | `#arrowhead-emphasis`      | Live event stream / hot path   |
-| `a-security`  | `#arrowhead-security`      | Auth / security flow (dashed)  |
-| `a-dashed`    | `#arrowhead-dashed`        | Async / secondary (dashed)     |
-
-Always set `stroke-width` on the line (e.g., `1.5`) — the class only sets color and dasharray.
-
-### Boundary classes
-
-| Class               | Purpose                            |
-|---------------------|------------------------------------|
-| `c-security-group`  | Dashed rose boundary for SGs       |
-| `c-region`          | Large dashed amber region/cluster  |
-| `c-lane`            | Subtle swimlane for workflow/process diagrams |
-
-### Typography
-
-Inherit from the SVG root (already wired to JetBrains Mono). Font sizes: 12px for component names, 9px for sublabels, 8px for annotations, 7px for tiny labels.
-
-### Visual Elements
-
-**Background grid:** Automatically themed via `.c-grid` inside the `<pattern id="grid">`. Don't modify.
-
-**Component boxes:** Rounded rectangles (`rx="6"`), `stroke-width="1.5"`, using the `.c-<type>` classes.
-
-**Arrow z-order:** Draw connection arrows BEFORE component boxes (earlier in the SVG). SVG paints in document order, so arrows drawn first appear behind shapes drawn later.
-
-**Masking arrows behind transparent fills:** Component fills are semi-transparent, which means arrows behind them bleed through. The template solves this with a two-rect pattern — an opaque mask rect, then the styled component on top:
-
-```svg
-<!-- 1. opaque mask (themed: dark=#0f172a, light=#ffffff) -->
-<rect x="X" y="Y" width="W" height="H" rx="6" class="c-mask"/>
-<!-- 2. styled component on top -->
-<rect x="X" y="Y" width="W" height="H" rx="6" class="c-database" stroke-width="1.5"/>
-```
-
-Always use `c-mask` instead of hardcoded `fill="#0f172a"` — the mask color itself is themed.
-
-**Message buses / Event buses:** Small connector elements between services:
-
-```svg
-<rect x="X" y="Y" width="120" height="20" rx="4" class="c-messagebus" stroke-width="1"/>
-<text x="CENTER_X" y="Y+14" class="t-messagebus" font-size="7" text-anchor="middle">Kafka / RabbitMQ</text>
-```
-
-### Spacing Rules
-
-**CRITICAL:** When stacking components vertically, ensure proper spacing to avoid overlaps:
-
-- **Standard component height:** 60px for services, 80-120px for larger components
-- **Minimum vertical gap between components:** 40px
-- **Inline connectors (message buses):** Place IN the gap between components, not overlapping
-
-**Example vertical layout:**
-```
-Component A: y=70,  height=60  -> ends at y=130
-Gap:         y=130 to y=170   -> 40px gap, place bus at y=140 (20px tall)
-Component B: y=170, height=60  -> ends at y=230
-```
-
-**Wrong:** Placing a message bus at y=160 when Component B starts at y=170 (causes overlap)
-**Right:** Placing a message bus at y=140, centered in the 40px gap (y=130 to y=170)
-
-### Security Group & Region Boundary Padding
-
-When a component sits inside a `c-security-group` or `c-region` boundary, the small label on the boundary (e.g., `sg-name :port`, `AWS Region: us-west-2`) needs room above the inner component — otherwise the label visually crashes into the box below it.
-
-**Rule:** boundary `y` = inner-component `y` − 30, boundary `height` = inner-component `height` + 50. Place the label 18px below the boundary top (baseline). This yields ~12px clear gap between the label baseline and the inner component's top edge.
-
-**Example** — a Load Balancer (y=280, h=50) inside a security group:
-
-```svg
-<!-- Security group — extends 30px above and 20px below the inner box -->
-<rect x="350" y="250" width="120" height="100" rx="8" class="c-security-group" stroke-width="1"/>
-<text x="358" y="268" class="t-security" font-size="8">sg-name :port</text>
-
-<!-- Inner component — unchanged coordinates -->
-<rect x="360" y="280" width="100" height="50" rx="6" class="c-mask"/>
-<rect x="360" y="280" width="100" height="50" rx="6" class="c-cloud" stroke-width="1.5"/>
-```
-
-If the inner component is taller (e.g., a 100px multi-line box), keep the 30/50 offsets — the extra vertical room on top stays the same, the bottom padding grows naturally.
-
-### Legend Placement
-
-**CRITICAL:** Place legends OUTSIDE all boundary boxes (region boundaries, cluster boundaries, security groups).
-
-- Calculate where all boundaries end (y position + height)
-- Place legend at least 20px below the lowest boundary
-- Expand SVG viewBox height if needed to accommodate
-
-### Layout Structure
-
-1. **Header** — Title with pulsing dot indicator, subtitle
-2. **Toolbar** (auto-included from template) — theme toggle + export menu, top-right fixed position
-3. **Main SVG diagram** — contained in rounded border card
-4. **Summary cards** — grid of 3 cards below diagram with key details
-5. **Footer** — minimal metadata line
-
-## Component Box Pattern
-
-```svg
-<rect x="X" y="Y" width="W" height="H" rx="6" class="c-mask"/>
-<rect x="X" y="Y" width="W" height="H" rx="6" class="c-<type>" stroke-width="1.5"/>
-<text x="CENTER_X" y="Y+20" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">LABEL</text>
-<text x="CENTER_X" y="Y+36" class="t-muted" font-size="9" text-anchor="middle">sublabel</text>
-```
-
-## Arrow Patterns
-
-```svg
-<!-- Standard -->
-<line x1="..." y1="..." x2="..." y2="..." class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-
-<!-- Emphasis (live events / hot path) -->
-<line x1="..." y1="..." x2="..." y2="..." class="a-emphasis" stroke-width="1.5" marker-end="url(#arrowhead-emphasis)"/>
-
-<!-- Security / auth flow (dashed) -->
-<path d="..." class="a-security" stroke-width="1.5" marker-end="url(#arrowhead-security)"/>
-
-<!-- Async / secondary (dashed) -->
-<path d="..." class="a-dashed" stroke-width="1" marker-end="url(#arrowhead-dashed)"/>
-```
-
-Pair each arrow class with the matching marker id (same suffix).
-
-## Info Card Pattern
-
-```html
-<div class="card">
-  <div class="card-header">
-    <div class="card-dot COLOR"></div>
-    <h3>Title</h3>
-  </div>
-  <ul>
-    <li>&bull; Item one</li>
-    <li>&bull; Item two</li>
-  </ul>
-</div>
-```
-
-Valid `card-dot` colors: `cyan`, `emerald`, `violet`, `amber`, `rose`, `orange`, `slate` — all automatically re-theme. Pair the dot to its component semantic (e.g., `orange` for a "Messaging" card, `slate` for an "External Services" card).
-
-## Template
-
-Copy and customize the template at `assets/template.html`. Customization points:
-
-1. Update the `<title>` and header `<h1>` text + subtitle
-2. Modify SVG `viewBox` dimensions if needed (default: `1000 x 680`)
-3. Add/remove/reposition component boxes using the `.c-<type>` classes
-4. Draw connection arrows using `.a-<variant>` classes
-5. Update the three summary cards
-6. Update footer metadata
-
-Do NOT remove the `.toolbar` element, the `<script>` blocks, or the `:root` / `[data-theme="..."]` CSS. Those are what give every generated diagram the theme toggle and export buttons.
+1. `grep -E 'fill="(#|rgb)|stroke="(#|rgb)' out.html` inside the SVG returns nothing except the template's own defs (Cardinal Rule).
+2. Every `c-<type>` rect has an identical-geometry `c-mask` rect immediately before it.
+3. All `<line>`/`<path>` arrows appear before all component rects in document order.
+4. Compute max(y + height) over all SVG elements: viewBox height must exceed it by ≥20px; same for x/width.
+5. Legend y is below every boundary's y + height.
+6. The `.toolbar`, `<script>` blocks, and `:root` / `[data-theme]` CSS are untouched — they ARE the theme toggle and export menu.
 
 ## Output
 
-Produce a single self-contained `.html` file with:
-
-- Embedded CSS (no external stylesheets except Google Fonts)
-- Inline SVG (no external images)
-- Small amount of embedded JS (theme toggle + export) — keep as-is from template
-
-The file should render correctly when opened directly in any modern browser. The **Export** menu should cleanly copy PNG to the clipboard, download PNG / JPEG / WebP (all at 4× source resolution, rendered natively by the browser — no bitmap upsampling), and download a **dual-theme self-contained SVG** whose colors follow the embedding host's `prefers-color-scheme` (dark by default; swaps to light under a light host; `svg[data-theme="..."]` still works as a manual override).
+A single self-contained `.html`: embedded CSS (Google Fonts loads async and degrades to system monospace offline), inline SVG, ~19KB embedded JS for theme + export. It renders directly in any modern browser. Raster exports render natively at up to 4× the viewBox (large diagrams step down to 3×/2× to stay under canvas limits); the SVG download is dual-theme self-contained and follows the host's `prefers-color-scheme` (manual override via `svg[data-theme="..."]`).
