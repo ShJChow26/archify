@@ -1,6 +1,6 @@
 # Archify Roadmap
 
-As of v2.6.0, the coordinate-stability work has shipped as JSON IR plus typed renderers for architecture, workflow, sequence, data-flow, and lifecycle diagrams. This file now records the design decisions that led there, plus the ideas that were explicitly declined. The original v2.4 / v2.5 backlog (export-scale URL param, color-blind palette, gzip+base64 share links) was considered and dropped — see [Not planned](#not-planned) for the rationale on each.
+As of v2.8.0, the coordinate-stability work has shipped as JSON IR plus typed renderers for architecture, workflow, sequence, data-flow, and lifecycle diagrams. Workflow diagrams now also have phase/group/exception-lane structure, happy-path linting, trace animation, and route-crossing guards. This file records the design decisions that led there, plus the ideas that were explicitly declined. The original v2.4 / v2.5 backlog (export-scale URL param, color-blind palette, gzip+base64 share links) was considered and dropped — see [Not planned](#not-planned) for the rationale on each.
 
 This roadmap was rewritten on 2026-04-16 after three independent design reviews, and updated the same day after a visual-quality validation experiment conclusively failed (see `experiments/v3-mermaid-validation/RESULT.md`).
 
@@ -76,7 +76,7 @@ Architecture diagrams use a free-coordinate component graph. The typed modes use
 | Phase | Deliverable | Target |
 |---|---|---|
 | ~~**Validate**~~ | ~~5-Mermaid blind-rate experiment~~ | **DONE — FAILED** (see below) |
-| **P0** | JSON IR + JSON Schema validator + `schema_version` enforcement | **DONE** — shipped for the four typed modes (workflow / sequence / dataflow / lifecycle), enforced at runtime via ajv |
+| **P0** | JSON IR + JSON Schema validator + `schema_version` enforcement | **DONE** — shipped for architecture, workflow, sequence, dataflow, and lifecycle, enforced at runtime via ajv |
 | **P0.5** | Pure-JS renderers take IR → HTML using the existing template. Coordinates required (no auto-layout). | **DONE** — architecture, workflow, sequence, data-flow, and lifecycle renderers ship in `archify/renderers/` |
 | ~~**P1**~~ | ~~Mermaid flowchart parser → IR~~ | **KILLED** — experiment showed auto-layout + CSS is not enough |
 | **P2** | Updated SKILL.md teaching Claude to accept Mermaid as input and lay out from scratch (prompt engineering, no parser) | **DONE — 2026-06-11** — implemented in SKILL.md's "Mermaid as an Input Dialect" section |
@@ -96,7 +96,7 @@ The experiment tested whether auto-layout (dagre) + archify CSS (version B) look
 - Architecture, workflow, sequence, data-flow, and lifecycle renderers ship under `archify/renderers/`.
 - `schema_version: 1` is documented in `archify/schemas/README.md`; schemas are enforced with ajv when dependencies are installed.
 - `SKILL.md` documents Mermaid as an accepted input dialect through prompt engineering, not a parser.
-- README and the GitHub Pages site describe the current install and usage surfaces.
+- README describes the current install and usage surfaces; the bundled CLI wraps renderer, validate, check, and example-generation commands.
 
 ### Workflow renderer pilot (2026-04-24)
 

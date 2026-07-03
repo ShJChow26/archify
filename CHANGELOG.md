@@ -2,6 +2,11 @@
 
 All notable changes are documented here. Format loosely follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Added
+- **Unified CLI entrypoint.** Added `bin/archify.mjs` with `render`, `validate`, `check`, and `examples` commands so renderer-backed workflows have a single product-facing command surface.
+
 ## [2.8.0] — 2026-07-03
 
 ### Added

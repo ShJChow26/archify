@@ -16,7 +16,7 @@ Every diagram ships with a **dark/light theme toggle** (persists in `localStorag
 
 ## Setup (one-time, renderer modes only)
 
-The four typed renderers validate JSON against schemas via `ajv`. From this skill's folder:
+The five typed renderers validate JSON against schemas via `ajv`. From this skill's folder:
 
 ```bash
 npm install
@@ -50,14 +50,14 @@ When the user pastes Mermaid code, do NOT try to render or parse it mechanically
 
 Drop Mermaid styling; keep only the topology and meaning. You choose grouping, lane order, and what deserves emphasis — that judgment is the product.
 
-## Renderer Modes (workflow / sequence / dataflow / lifecycle)
+## Renderer Modes (architecture / workflow / sequence / dataflow / lifecycle)
 
-All four modes follow the same loop:
+All five modes follow the same loop:
 
-1. **Read first**: the schema (`schemas/<type>.schema.json`) and the complete worked example (`examples/*.{workflow,sequence,dataflow,lifecycle}.json`) — copy its patterns instead of guessing field shapes.
+1. **Read first**: the schema (`schemas/<type>.schema.json`) and the complete worked example (`examples/*.{architecture,workflow,sequence,dataflow,lifecycle}.json`) — copy its patterns instead of guessing field shapes.
 2. Write `<name>.<type>.json`.
-3. Render: `node renderers/<type>/render-<type>.mjs <input>.json <output>.html` (paths relative to this skill's folder).
-4. Check the generated artifact: `node scripts/check-render-output.mjs <output>.html`. This catches malformed SVG output, non-finite SVG values, two-point diagonal arrows, and arrows crossing the legend.
+3. Render: `node bin/archify.mjs render <type> <input>.json <output>.html` (paths relative to this skill's folder).
+4. Validate the generated artifact: `node bin/archify.mjs validate <type> <input>.json --json`, or check an existing HTML file with `node bin/archify.mjs check <output>.html`. This catches malformed SVG output, non-finite SVG values, two-point diagonal arrows, and arrows crossing the legend.
 5. If either step fails, the error names the JSON path or the fix (thresholds, valid ranges, which knob to change). Fix the JSON and re-run; never edit the renderer.
 
 Schema violations exit non-zero with path-prefixed messages like `/nodes/3 (id/label: "router") must NOT have additional properties`. The renderers additionally fail fast on layout problems: node/state overlap (including cross-lane), labels colliding with nodes or other labels, labels wider than their node, out-of-range columns/rows, too-short edges, workflow edges crossing unrelated nodes, and legends outside the viewBox. CJK text is measured at double width automatically.
