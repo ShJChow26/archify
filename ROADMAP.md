@@ -1,6 +1,6 @@
 # Archify Roadmap
 
-As of v2.8.0, the coordinate-stability work has shipped as JSON IR plus typed renderers for architecture, workflow, sequence, data-flow, and lifecycle diagrams. Workflow diagrams now also have phase/group/exception-lane structure, happy-path linting, trace animation, and route-crossing guards. This file records the design decisions that led there, plus the ideas that were explicitly declined. The original v2.4 / v2.5 backlog (export-scale URL param, color-blind palette, gzip+base64 share links) was considered and dropped — see [Not planned](#not-planned) for the rationale on each.
+As of v2.9.0, the coordinate-stability work has shipped as JSON IR plus typed renderers for architecture, workflow, sequence, data-flow, and lifecycle diagrams. Workflow diagrams now also have phase/group/exception-lane structure, happy-path linting, trace animation, and route-crossing guards. A unified CLI (`bin/archify.mjs`) wraps render, validate, check, and examples. This file records the design decisions that led there, plus the ideas that were explicitly declined. The original v2.4 / v2.5 backlog (export-scale URL param, color-blind palette, gzip+base64 share links) was considered and dropped — see [Not planned](#not-planned) for the rationale on each.
 
 This roadmap was rewritten on 2026-04-16 after three independent design reviews, and updated the same day after a visual-quality validation experiment conclusively failed (see `experiments/v3-mermaid-validation/RESULT.md`).
 

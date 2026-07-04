@@ -49,6 +49,20 @@ Archify now has five primary outputs:
 | **Data Flow** | Data pipelines, ETL/ELT, analytics events, PII isolation, warehouse sync, lineage, downstream consumers | Describe sources, processing stages, storage, sensitivity boundaries, and consumers |
 | **Lifecycle** | State machines, order/task/deployment/agent-run lifecycles, wait states, retries, cancellation, timeout, terminal states | Describe states, transition events, retry paths, and terminal outcomes |
 
+Architecture diagrams explain system structure — components, boundaries, and how they connect:
+
+```text
+Use archify to draw an architecture diagram:
+React frontend calls a Node.js API backed by PostgreSQL and Redis, deployed on AWS behind CloudFront.
+```
+
+Sample SaaS diagram: [`examples/web-app.html`](examples/web-app.html).
+
+Real-repo examples (renderer-backed JSON IR):
+
+- [`examples/archify-repo.html`](examples/archify-repo.html) — this project's skill → JSON IR → renderers pipeline
+- [`examples/maka-architecture.html`](examples/maka-architecture.html) — third-party desktop agent workbench (Maka)
+
 Workflow is not trying to replace every general-purpose flowchart. It is a technical communication diagram: swimlanes, semantic colors, a clear happy path, and secondary async / approval / trace paths.
 
 ```text
@@ -97,24 +111,26 @@ Open the example here: [`examples/lifecycle-agent-run.html`](examples/lifecycle-
 
 ## What's new
 
-Archify is based on [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator) v1.0 (dark-only, HTML output). **2.0** rewrote the template around a themeable CSS-variable system and added a client-side export pipeline. **2.1** added copy-to-clipboard + keyboard nav. **2.2** added a print stylesheet + local-font fallback. **2.3** fixed the raster upsampling bug and made exports genuinely sharp at up to 4× source resolution. **2.4** upgraded SVG export to a dual-theme self-contained file. **2.5** added renderer-backed workflow / sequence / data-flow / lifecycle modes, Mermaid input guidance, CJK-aware text measurement, golden tests, and CI. **2.6** brought the architecture renderer to schema + layout validation parity. **2.7** hardens workflow diagrams with phase headers, groups, exception lanes, happy-path linting, same-lane orthogonal routing, and a post-render HTML/SVG checker. **2.8** adds opt-in trace animation and rejects workflow routes that cross unrelated nodes.
+Archify is based on [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator) v1.0 (dark-only, HTML output). **2.0** rewrote the template around a themeable CSS-variable system and added a client-side export pipeline. **2.1** added copy-to-clipboard + keyboard nav. **2.2** added a print stylesheet + local-font fallback. **2.3** fixed the raster upsampling bug and made exports genuinely sharp at up to 4× source resolution. **2.4** upgraded SVG export to a dual-theme self-contained file. **2.5** added renderer-backed workflow / sequence / data-flow / lifecycle modes, Mermaid input guidance, CJK-aware text measurement, golden tests, and CI. **2.6** brought the architecture renderer to schema + layout validation parity. **2.7** hardens workflow diagrams with phase headers, groups, exception lanes, happy-path linting, same-lane orthogonal routing, and a post-render HTML/SVG checker. **2.8** adds opt-in trace animation and rejects workflow routes that cross unrelated nodes. **2.9** adds a unified CLI (`bin/archify.mjs`) and real-repo architecture examples.
 
-| Feature | v1.0 | 2.0 | 2.1 | 2.2 | 2.3 | 2.4 | 2.5 | 2.6 | 2.7 | 2.8 |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Dark theme | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Same |
-| Light theme | — | Toggle | Toggle | Toggle | Toggle + <kbd>T</kbd> shortcut | Same | Same | Same | Same | Same |
-| PNG / JPEG / WebP download | manual screenshot | 2× bitmap-upsampled | 1× / 2× / 4× selector (still upsampled) | same | **4× rasterized natively — no blur** | Same | **Light-export lane colors fixed** | Same | Same | Same |
-| SVG download | — | Vector, styles inlined (single theme) | Same | Same | Same | **Dual-theme self-contained** (`@media prefers-color-scheme`) | Same (lane colors fixed) | Same | Same | Same |
-| Copy PNG to clipboard | — | — | Yes | Same | Yes (up to 4×) | Same | **Safari fix** | Same | Same | Same |
-| Keyboard shortcuts | — | — | <kbd>T</kbd> / <kbd>E</kbd> + menu nav | Same | Same | Same | Same | Same | Same | Same |
-| Accessibility | — | — | ARIA + focus-visible | Same | Same | Same | Same (+ menu a11y fixes) | Same | Same | Same |
-| Print stylesheet | — | — | — | Yes | Yes (+ landscape + 2-col cards) | Same | Same | Same | Same | Same |
-| Local-font fallback on export | — | — | — | Yes | Yes | Same | **+ CJK font fallback** | Same | Same | Same |
-| Styling model | Inline `fill` / `stroke` | CSS custom properties + semantic classes | Same | Same | Same | Same | Same | Same | Same | Same |
-| Typed renderers + schema validation | — | — | — | — | — | — | Workflow / sequence / data-flow / lifecycle | **+ architecture** | Same | Same |
-| Workflow structure aids | — | — | — | — | — | — | Lanes + routed edges | Same | **Phases, groups, exception lanes, mainPath lint** | **Route-crossing guard** |
-| Post-render artifact checker | — | — | — | — | — | — | — | — | **Yes** | Same |
-| Trace animation | — | — | — | — | — | — | — | — | — | **Opt-in** |
+| Feature | v1.0 | 2.0 | 2.1 | 2.2 | 2.3 | 2.4 | 2.5 | 2.6 | 2.7 | 2.8 | 2.9 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Dark theme | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Same | Same |
+| Light theme | — | Toggle | Toggle | Toggle | Toggle + <kbd>T</kbd> shortcut | Same | Same | Same | Same | Same | Same |
+| PNG / JPEG / WebP download | manual screenshot | 2× bitmap-upsampled | 1× / 2× / 4× selector (still upsampled) | same | **4× rasterized natively — no blur** | Same | **Light-export lane colors fixed** | Same | Same | Same | Same |
+| SVG download | — | Vector, styles inlined (single theme) | Same | Same | Same | **Dual-theme self-contained** (`@media prefers-color-scheme`) | Same (lane colors fixed) | Same | Same | Same | Same |
+| Copy PNG to clipboard | — | — | Yes | Same | Yes (up to 4×) | Same | **Safari fix** | Same | Same | Same | Same |
+| Keyboard shortcuts | — | — | <kbd>T</kbd> / <kbd>E</kbd> + menu nav | Same | Same | Same | Same | Same | Same | Same | Same |
+| Accessibility | — | — | ARIA + focus-visible | Same | Same | Same | Same (+ menu a11y fixes) | Same | Same | Same | Same |
+| Print stylesheet | — | — | — | Yes | Yes (+ landscape + 2-col cards) | Same | Same | Same | Same | Same | Same |
+| Local-font fallback on export | — | — | — | Yes | Yes | Same | **+ CJK font fallback** | Same | Same | Same | Same |
+| Styling model | Inline `fill` / `stroke` | CSS custom properties + semantic classes | Same | Same | Same | Same | Same | Same | Same | Same | Same |
+| Typed renderers + schema validation | — | — | — | — | — | — | Workflow / sequence / data-flow / lifecycle | **+ architecture** | Same | Same | Same |
+| Workflow structure aids | — | — | — | — | — | — | Lanes + routed edges | Same | **Phases, groups, exception lanes, mainPath lint** | **Route-crossing guard** | Same |
+| Post-render artifact checker | — | — | — | — | — | — | — | — | **Yes** | Same | Same |
+| Trace animation | — | — | — | — | — | — | — | — | — | **Opt-in** | Same |
+| Unified CLI | — | — | — | — | — | — | — | — | — | — | **Yes** |
+| Real-repo architecture examples | — | — | — | — | — | — | — | — | — | — | **Yes** |
 
 ## Quick start
 
@@ -368,6 +384,8 @@ Archify 2.x contributes:
 - Print stylesheet + local-font fallback
 - Renderer-backed architecture, workflow, sequence, data-flow, and lifecycle diagrams with schema validation
 - Post-render artifact checks for final HTML/SVG quality
+- Unified CLI (`bin/archify.mjs`) for render / validate / check / examples
+- Real-repo architecture examples (`archify-repo`, `maka-architecture`)
 - Updated `SKILL.md` to guide Claude toward class-based (themeable) diagrams
 
 Both projects are MIT-licensed.
