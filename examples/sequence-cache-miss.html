@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="generator" content="archify 2.10.0">
-  <title>Product Analytics Data Flow Diagram</title>
+  <meta name="generator" content="archify 2.9.0">
+  <title>Cache Miss Request Sequence Diagram</title>
   <script>
     // Resolve the theme before first paint so light-preference users don't
     // see a dark flash. The toolbar script below re-applies with UI state.
@@ -525,14 +525,14 @@
     <div class="header">
       <div class="header-row">
         <div class="pulse-dot"></div>
-        <h1>Product Analytics Data Flow</h1>
+        <h1>Cache Miss Request Sequence</h1>
       </div>
-      <p class="subtitle">Events, consent, PII isolation, warehouse sync, and downstream analytics</p>
+      <p class="subtitle">Frontend request path with auth, cache fallback, persistence, and async trace</p>
     </div>
 
     <!-- Main Diagram -->
     <div class="diagram-container">
-      <svg viewBox="0 0 1080 760" role="img" aria-label="Product Analytics Data Flow — Events, consent, PII isolation, warehouse sync, and downstream analytics (data-flow diagram)">
+      <svg viewBox="0 0 820 760" role="img" aria-label="Cache Miss Request Sequence — Frontend request path with auth, cache fallback, persistence, and async trace (sequence diagram)">
         <!-- Definitions -->
         <defs>
           <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -555,137 +555,134 @@
         <!-- Background Grid -->
         <rect width="100%" height="100%" fill="url(#grid)" />
 
-        <!-- Data Stages -->
-        <rect x="16" y="46" width="168" height="640" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="100" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">01 / Sources</text>
+        <!-- Time Segments -->
+        <rect x="48" y="150" width="724" height="145" rx="10" class="c-lane" stroke-width="1"/>
+        <text x="62" y="168" class="t-dim" font-size="9" font-weight="600">Request</text>
 
-        <rect x="231" y="46" width="168" height="640" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="315" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">02 / Ingest</text>
+        <rect x="48" y="315" width="724" height="190" rx="10" class="c-lane" stroke-width="1"/>
+        <text x="62" y="333" class="t-dim" font-size="9" font-weight="600">Fallback</text>
 
-        <rect x="446" y="46" width="168" height="640" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="530" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">03 / Process</text>
+        <rect x="48" y="525" width="724" height="140" rx="10" class="c-lane" stroke-width="1"/>
+        <text x="62" y="543" class="t-dim" font-size="9" font-weight="600">Response + trace</text>
 
-        <rect x="661" y="46" width="168" height="640" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="745" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">04 / Store</text>
+        <!-- Lifelines -->
+        <path d="M 62 142 L 62 695" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 170 142 L 170 695" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 278 142 L 278 695" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 386 142 L 386 695" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 494 142 L 494 695" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 602 142 L 602 695" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
+        <path d="M 710 142 L 710 695" class="a-default" stroke-width="0.8" stroke-dasharray="3,7"/>
 
-        <rect x="876" y="46" width="168" height="640" rx="10" class="c-lane" stroke-width="1"/>
-        <text x="960" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">05 / Consume</text>
+        <!-- Messages -->
+        <path d="M 69 185 L 163 185" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <rect x="86.6" y="165" width="58.800000000000004" height="16" rx="3" class="c-mask"/>
+        <text x="116" y="175" class="t-backend" font-size="9" text-anchor="middle">open page</text>
 
-        <!-- Flow paths -->
-        <path d="M 156 157 L 184 157 L 184 271 L 259 271" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path d="M 156 385 L 222 385 L 222 271 L 259 271" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path d="M 315 242 L 315 112 L 450 112 L 450 157 L 474 157" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <path d="M 371 271 L 420 271 L 420 385 L 474 385" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path d="M 586 157 L 689 157" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <path d="M 586 385 L 689 385" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path d="M 745 414 L 745 584" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <path d="M 801 385 L 852 385 L 852 271 L 904 271" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path d="M 801 613 L 904 613" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <path d="M 801 157 L 878 157 L 878 212 L 960 212 L 960 242" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+        <path d="M 177 228 L 271 228" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <rect x="181.6" y="208" width="84.8" height="16" rx="3" class="c-mask"/>
+        <text x="224" y="218" class="t-backend" font-size="9" text-anchor="middle">GET /dashboard</text>
 
-        <!-- Nodes -->
-        <rect x="44" y="128" width="112" height="58" rx="6" class="c-mask"/>
-        <rect x="44" y="128" width="112" height="58" rx="6" class="c-frontend" stroke-width="1.5"/>
-        <text x="100" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Web App</text>
-        <text x="100" y="165" class="t-muted" font-size="7" text-anchor="middle">browser SDK</text>
-        <text x="100" y="175" class="t-frontend" font-size="7" text-anchor="middle">events</text>
+        <path d="M 285 270 L 379 270" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+        <rect x="300" y="250" width="64" height="16" rx="3" class="c-mask"/>
+        <text x="332" y="260" class="t-security" font-size="9" text-anchor="middle">verify JWT</text>
 
-        <rect x="44" y="356" width="112" height="58" rx="6" class="c-mask"/>
-        <rect x="44" y="356" width="112" height="58" rx="6" class="c-frontend" stroke-width="1.5"/>
-        <text x="100" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Mobile</text>
-        <text x="100" y="393" class="t-muted" font-size="7" text-anchor="middle">iOS / Android</text>
-        <text x="100" y="403" class="t-frontend" font-size="7" text-anchor="middle">events</text>
+        <path d="M 379 305 L 285 305" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <rect x="302.6" y="285" width="58.800000000000004" height="16" rx="3" class="c-mask"/>
+        <text x="332" y="295" class="t-muted" font-size="9" text-anchor="middle">claims ok</text>
 
-        <rect x="259" y="242" width="112" height="58" rx="6" class="c-mask"/>
-        <rect x="259" y="242" width="112" height="58" rx="6" class="c-cloud" stroke-width="1.5"/>
-        <text x="315" y="263" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Edge API</text>
-        <text x="315" y="279" class="t-muted" font-size="7" text-anchor="middle">collector</text>
-        <text x="315" y="289" class="t-cloud" font-size="7" text-anchor="middle">TLS</text>
+        <path d="M 285 354 L 487 354" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <rect x="354" y="334" width="64" height="16" rx="3" class="c-mask"/>
+        <text x="386" y="344" class="t-backend" font-size="9" text-anchor="middle">read cache</text>
 
-        <rect x="474" y="128" width="112" height="58" rx="6" class="c-mask"/>
-        <rect x="474" y="128" width="112" height="58" rx="6" class="c-security" stroke-width="1.5"/>
-        <text x="530" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Consent Gate</text>
-        <text x="530" y="165" class="t-muted" font-size="7" text-anchor="middle">policy filter</text>
-        <text x="530" y="175" class="t-security" font-size="7" text-anchor="middle">PII guard</text>
+        <path d="M 487 391 L 285 391" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <rect x="369" y="371" width="34" height="16" rx="3" class="c-mask"/>
+        <text x="386" y="381" class="t-muted" font-size="9" text-anchor="middle">miss</text>
 
-        <rect x="474" y="356" width="112" height="58" rx="6" class="c-mask"/>
-        <rect x="474" y="356" width="112" height="58" rx="6" class="c-messagebus" stroke-width="1.5"/>
-        <text x="530" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Event Stream</text>
-        <text x="530" y="393" class="t-muted" font-size="7" text-anchor="middle">Kafka topic</text>
-        <text x="530" y="403" class="t-messagebus" font-size="7" text-anchor="middle">ordered</text>
+        <path d="M 285 443 L 595 443" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <rect x="374.2" y="423" width="131.60000000000002" height="16" rx="3" class="c-mask"/>
+        <text x="440" y="433" class="t-backend" font-size="9" text-anchor="middle">query profile + metrics</text>
 
-        <rect x="689" y="128" width="112" height="58" rx="6" class="c-mask"/>
-        <rect x="689" y="128" width="112" height="58" rx="6" class="c-security" stroke-width="1.5"/>
-        <text x="745" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">PII Vault</text>
-        <text x="745" y="165" class="t-muted" font-size="7" text-anchor="middle">encrypted</text>
-        <text x="745" y="175" class="t-security" font-size="7" text-anchor="middle">restricted</text>
+        <path d="M 595 489 L 285 489" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <rect x="423" y="469" width="34" height="16" rx="3" class="c-mask"/>
+        <text x="440" y="479" class="t-muted" font-size="9" text-anchor="middle">rows</text>
 
-        <rect x="689" y="356" width="112" height="58" rx="6" class="c-mask"/>
-        <rect x="689" y="356" width="112" height="58" rx="6" class="c-database" stroke-width="1.5"/>
-        <text x="745" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Warehouse</text>
-        <text x="745" y="393" class="t-muted" font-size="7" text-anchor="middle">analytics tables</text>
-        <text x="745" y="403" class="t-database" font-size="7" text-anchor="middle">curated</text>
+        <path d="M 285 536 L 487 536" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+        <rect x="356.6" y="516" width="58.800000000000004" height="16" rx="3" class="c-mask"/>
+        <text x="386" y="526" class="t-messagebus" font-size="9" text-anchor="middle">set cache</text>
 
-        <rect x="689" y="584" width="112" height="58" rx="6" class="c-mask"/>
-        <rect x="689" y="584" width="112" height="58" rx="6" class="c-database" stroke-width="1.5"/>
-        <text x="745" y="605" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Feature Store</text>
-        <text x="745" y="621" class="t-muted" font-size="7" text-anchor="middle">daily batch</text>
-        <text x="745" y="631" class="t-database" font-size="7" text-anchor="middle">derived</text>
+        <path d="M 285 580 L 703 580" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+        <rect x="462" y="560" width="64" height="16" rx="3" class="c-mask"/>
+        <text x="494" y="570" class="t-messagebus" font-size="9" text-anchor="middle">emit trace</text>
 
-        <rect x="904" y="242" width="112" height="58" rx="6" class="c-mask"/>
-        <rect x="904" y="242" width="112" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
-        <text x="960" y="263" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Dashboards</text>
-        <text x="960" y="279" class="t-muted" font-size="7" text-anchor="middle">product metrics</text>
-        <text x="960" y="289" class="t-backend" font-size="7" text-anchor="middle">SQL</text>
+        <path d="M 271 625 L 177 625" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <rect x="197.2" y="605" width="53.6" height="16" rx="3" class="c-mask"/>
+        <text x="224" y="615" class="t-muted" font-size="9" text-anchor="middle">200 JSON</text>
 
-        <rect x="904" y="584" width="112" height="58" rx="6" class="c-mask"/>
-        <rect x="904" y="584" width="112" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
-        <text x="960" y="605" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">ML Model</text>
-        <text x="960" y="621" class="t-muted" font-size="7" text-anchor="middle">ranking job</text>
-        <text x="960" y="631" class="t-backend" font-size="7" text-anchor="middle">features</text>
+        <path d="M 163 662 L 69 662" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <rect x="94.4" y="642" width="43.2" height="16" rx="3" class="c-mask"/>
+        <text x="116" y="652" class="t-muted" font-size="9" text-anchor="middle">render</text>
 
-        <!-- Flow labels -->
-        <rect x="171.05" y="179" width="65.9" height="27" rx="4" class="c-mask"/>
-        <text x="204" y="190" class="t-backend" font-size="8" text-anchor="middle">clickstream</text>
-        <text x="204" y="201" class="t-dim" font-size="7" text-anchor="middle">user events</text>
-        <rect x="182.15" y="331" width="75.7" height="27" rx="4" class="c-mask"/>
-        <text x="220" y="342" class="t-muted" font-size="8" text-anchor="middle">app events</text>
-        <text x="220" y="353" class="t-dim" font-size="7" text-anchor="middle">device events</text>
-        <rect x="331.9" y="89" width="100.2" height="27" rx="4" class="c-mask"/>
-        <text x="382" y="100" class="t-security" font-size="8" text-anchor="middle">identity + consent</text>
-        <text x="382" y="111" class="t-dim" font-size="7" text-anchor="middle">PII touch</text>
-        <rect x="395.25" y="313" width="85.5" height="27" rx="4" class="c-mask"/>
-        <text x="438" y="324" class="t-backend" font-size="8" text-anchor="middle">accepted events</text>
-        <text x="438" y="335" class="t-dim" font-size="7" text-anchor="middle">append-only</text>
-        <rect x="600.15" y="133" width="75.7" height="27" rx="4" class="c-mask"/>
-        <text x="638" y="144" class="t-security" font-size="8" text-anchor="middle">identity map</text>
-        <text x="638" y="155" class="t-dim" font-size="7" text-anchor="middle">encrypted PII</text>
-        <rect x="592.8" y="361" width="90.4" height="27" rx="4" class="c-mask"/>
-        <text x="638" y="372" class="t-backend" font-size="8" text-anchor="middle">normalized facts</text>
-        <text x="638" y="383" class="t-dim" font-size="7" text-anchor="middle">non-PII</text>
-        <rect x="699.8" y="485" width="90.4" height="27" rx="4" class="c-mask"/>
-        <text x="745" y="496" class="t-messagebus" font-size="8" text-anchor="middle">daily aggregates</text>
-        <text x="745" y="507" class="t-dim" font-size="7" text-anchor="middle">batch</text>
-        <rect x="797.05" y="315" width="65.9" height="27" rx="4" class="c-mask"/>
-        <text x="830" y="326" class="t-muted" font-size="8" text-anchor="middle">metrics SQL</text>
-        <text x="830" y="337" class="t-dim" font-size="7" text-anchor="middle">read-only</text>
-        <rect x="809.25" y="587" width="85.5" height="27" rx="4" class="c-mask"/>
-        <text x="852" y="598" class="t-messagebus" font-size="8" text-anchor="middle">feature vectors</text>
-        <text x="852" y="609" class="t-dim" font-size="7" text-anchor="middle">derived</text>
-        <rect x="837.25" y="187" width="85.5" height="27" rx="4" class="c-mask"/>
-        <text x="880" y="198" class="t-security" font-size="8" text-anchor="middle">restricted join</text>
-        <text x="880" y="209" class="t-dim" font-size="7" text-anchor="middle">approved only</text>
+        <!-- Activations -->
+        <rect x="165" y="220" width="10" height="448" rx="3" class="c-mask"/>
+        <rect x="165" y="220" width="10" height="448" rx="3" class="c-frontend" stroke-width="1"/>
+        <rect x="273" y="228" width="10" height="404" rx="3" class="c-mask"/>
+        <rect x="273" y="228" width="10" height="404" rx="3" class="c-backend" stroke-width="1"/>
+        <rect x="381" y="265" width="10" height="45" rx="3" class="c-mask"/>
+        <rect x="381" y="265" width="10" height="45" rx="3" class="c-security" stroke-width="1"/>
+        <rect x="489" y="349" width="10" height="49" rx="3" class="c-mask"/>
+        <rect x="489" y="349" width="10" height="49" rx="3" class="c-database" stroke-width="1"/>
+        <rect x="597" y="438" width="10" height="58" rx="3" class="c-mask"/>
+        <rect x="597" y="438" width="10" height="58" rx="3" class="c-database" stroke-width="1"/>
+        <rect x="705" y="575" width="10" height="55" rx="3" class="c-mask"/>
+        <rect x="705" y="575" width="10" height="55" rx="3" class="c-messagebus" stroke-width="1"/>
+
+        <!-- Participants -->
+        <rect x="19" y="72" width="86" height="54" rx="6" class="c-mask"/>
+        <rect x="19" y="72" width="86" height="54" rx="6" class="c-external" stroke-width="1.5"/>
+        <text x="62" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">User</text>
+        <text x="62" y="111" class="t-muted" font-size="7" text-anchor="middle">browser session</text>
+
+        <rect x="127" y="72" width="86" height="54" rx="6" class="c-mask"/>
+        <rect x="127" y="72" width="86" height="54" rx="6" class="c-frontend" stroke-width="1.5"/>
+        <text x="170" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Web App</text>
+        <text x="170" y="111" class="t-muted" font-size="7" text-anchor="middle">React UI</text>
+
+        <rect x="235" y="72" width="86" height="54" rx="6" class="c-mask"/>
+        <rect x="235" y="72" width="86" height="54" rx="6" class="c-backend" stroke-width="1.5"/>
+        <text x="278" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">API</text>
+        <text x="278" y="111" class="t-muted" font-size="7" text-anchor="middle">request handler</text>
+
+        <rect x="343" y="72" width="86" height="54" rx="6" class="c-mask"/>
+        <rect x="343" y="72" width="86" height="54" rx="6" class="c-security" stroke-width="1.5"/>
+        <text x="386" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Auth</text>
+        <text x="386" y="111" class="t-muted" font-size="7" text-anchor="middle">JWT verify</text>
+
+        <rect x="451" y="72" width="86" height="54" rx="6" class="c-mask"/>
+        <rect x="451" y="72" width="86" height="54" rx="6" class="c-database" stroke-width="1.5"/>
+        <text x="494" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Redis</text>
+        <text x="494" y="111" class="t-muted" font-size="7" text-anchor="middle">cache</text>
+
+        <rect x="559" y="72" width="86" height="54" rx="6" class="c-mask"/>
+        <rect x="559" y="72" width="86" height="54" rx="6" class="c-database" stroke-width="1.5"/>
+        <text x="602" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Postgres</text>
+        <text x="602" y="111" class="t-muted" font-size="7" text-anchor="middle">source of truth</text>
+
+        <rect x="667" y="72" width="86" height="54" rx="6" class="c-mask"/>
+        <rect x="667" y="72" width="86" height="54" rx="6" class="c-messagebus" stroke-width="1.5"/>
+        <text x="710" y="94" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Trace</text>
+        <text x="710" y="111" class="t-muted" font-size="7" text-anchor="middle">async event</text>
 
         <!-- Legend -->
-        <text x="214" y="704" class="t-primary" font-size="10" font-weight="600">Legend</text>
-        <path d="M 214 724 L 248 724" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <text x="257" y="727" class="t-muted" font-size="8">primary data</text>
-        <path d="M 340 724 L 374 724" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
-        <text x="383" y="727" class="t-muted" font-size="8">policy / PII</text>
-        <path d="M 480 724 L 514 724" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <text x="523" y="727" class="t-muted" font-size="8">async batch</text>
-        <rect x="625" y="716" width="14" height="9" rx="2" class="c-database" stroke-width="1"/>
-        <text x="646" y="724" class="t-muted" font-size="8">data store</text>
+        <text x="150" y="686" class="t-primary" font-size="10" font-weight="600">Legend</text>
+        <path d="M 150 706 L 184 706" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <text x="193" y="709" class="t-muted" font-size="8">request</text>
+        <path d="M 270 706 L 304 706" class="a-default" stroke-width="1.4" stroke-dasharray="3,5" marker-end="url(#arrowhead)"/>
+        <text x="313" y="709" class="t-muted" font-size="8">return</text>
+        <path d="M 385 706 L 419 706" class="a-security" stroke-width="1.4" marker-end="url(#arrowhead-security)"/>
+        <text x="428" y="709" class="t-muted" font-size="8">security</text>
+        <path d="M 530 706 L 564 706" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+        <text x="573" y="709" class="t-muted" font-size="8">async trace</text>
       </svg>
     </div>
 
@@ -694,43 +691,43 @@
       <div class="card">
         <div class="card-header">
           <div class="card-dot emerald"></div>
-          <h3>Primary Data Path</h3>
+          <h3>Happy Path</h3>
         </div>
         <ul>
-          <li>&bull; Events move left to right through source, ingest, process, store, and consume stages</li>
-          <li>&bull; The hot path stays visually clear even with secondary batch flows</li>
-          <li>&bull; Labels name data assets instead of generic API verbs</li>
+          <li>&bull; The main request is Web App -&gt; API -&gt; data source -&gt; response</li>
+          <li>&bull; Return messages are quieter than forward calls</li>
+          <li>&bull; Activation bars make ownership duration visible</li>
         </ul>
       </div>
 
       <div class="card">
         <div class="card-header">
           <div class="card-dot rose"></div>
-          <h3>Sensitive Boundary</h3>
+          <h3>Policy + Fallback</h3>
         </div>
         <ul>
-          <li>&bull; Consent and PII paths are styled as security flows</li>
-          <li>&bull; PII lands in a restricted vault, separate from the analytics warehouse</li>
-          <li>&bull; Restricted joins are visible without implying default access</li>
+          <li>&bull; JWT verification is colored as a security interaction</li>
+          <li>&bull; Cache miss is visible without overpowering the main path</li>
+          <li>&bull; Database access only appears after cache fallback</li>
         </ul>
       </div>
 
       <div class="card">
         <div class="card-header">
           <div class="card-dot orange"></div>
-          <h3>Derived Consumers</h3>
+          <h3>Async Trace</h3>
         </div>
         <ul>
-          <li>&bull; Dashboards read curated facts from the warehouse</li>
-          <li>&bull; Feature vectors are derived by batch from analytics tables</li>
-          <li>&bull; Consumption paths stay distinct from collection and consent handling</li>
+          <li>&bull; Trace emission is dashed and secondary</li>
+          <li>&bull; It does not block the response path</li>
+          <li>&bull; The diagram separates user-facing latency from observability</li>
         </ul>
       </div>
     </div>
 
     <!-- Footer -->
     <p class="footer">
-      Data-flow diagram &bull; Built with Archify<span class="no-print"> &bull; Press <kbd>T</kbd> for theme and <kbd>E</kbd> for export</span>
+      Sequence diagram &bull; Built with Archify<span class="no-print"> &bull; Press <kbd>T</kbd> for theme and <kbd>E</kbd> for export</span>
     </p>
   </div>
 

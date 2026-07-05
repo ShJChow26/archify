@@ -17,7 +17,7 @@ Archify is an agent skill for Claude, Codex CLI, and opencode. It turns a plain-
 
 ![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)
 ![Agent Skill](https://img.shields.io/badge/Agent-Skill-7C3AED?style=flat-square)
-![Version](https://img.shields.io/badge/version-2.9.0-0891b2?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.10.0-0891b2?style=flat-square)
 
 **Project page:** [tt-a1i.github.io/archify](https://tt-a1i.github.io/archify/)
 
@@ -112,26 +112,28 @@ Open the example here: [`examples/lifecycle-agent-run.html`](examples/lifecycle-
 
 ## What's new
 
-Archify is based on [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator) v1.0 (dark-only, HTML output). **2.0** rewrote the template around a themeable CSS-variable system and added a client-side export pipeline. **2.1** added copy-to-clipboard + keyboard nav. **2.2** added a print stylesheet + local-font fallback. **2.3** fixed the raster upsampling bug and made exports genuinely sharp at up to 4× source resolution. **2.4** upgraded SVG export to a dual-theme self-contained file. **2.5** added renderer-backed workflow / sequence / data-flow / lifecycle modes, Mermaid input guidance, CJK-aware text measurement, golden tests, and CI. **2.6** brought the architecture renderer to schema + layout validation parity. **2.7** hardens workflow diagrams with phase headers, groups, exception lanes, happy-path linting, same-lane orthogonal routing, and a post-render HTML/SVG checker. **2.8** adds opt-in trace animation and rejects workflow routes that cross unrelated nodes. **2.9** adds a unified CLI (`bin/archify.mjs`) and real-repo architecture examples.
+Archify is based on [Cocoon-AI/architecture-diagram-generator](https://github.com/Cocoon-AI/architecture-diagram-generator) v1.0 (dark-only, HTML output). **2.0** rewrote the template around a themeable CSS-variable system and added a client-side export pipeline. **2.1** added copy-to-clipboard + keyboard nav. **2.2** added a print stylesheet + local-font fallback. **2.3** fixed the raster upsampling bug and made exports genuinely sharp at up to 4× source resolution. **2.4** upgraded SVG export to a dual-theme self-contained file. **2.5** added renderer-backed workflow / sequence / data-flow / lifecycle modes, Mermaid input guidance, CJK-aware text measurement, golden tests, and CI. **2.6** brought the architecture renderer to schema + layout validation parity. **2.7** hardens workflow diagrams with phase headers, groups, exception lanes, happy-path linting, same-lane orthogonal routing, and a post-render HTML/SVG checker. **2.8** adds opt-in trace animation and rejects workflow routes that cross unrelated nodes. **2.9** adds a unified CLI (`bin/archify.mjs`) and real-repo architecture examples. **2.10** adds actionable validator hints, optional architecture grid placement (`row`/`col`), and `archify inspect` for computed layout JSON.
 
-| Feature | v1.0 | 2.0 | 2.1 | 2.2 | 2.3 | 2.4 | 2.5 | 2.6 | 2.7 | 2.8 | 2.9 |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| Dark theme | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Same | Same |
-| Light theme | — | Toggle | Toggle | Toggle | Toggle + <kbd>T</kbd> shortcut | Same | Same | Same | Same | Same | Same |
-| PNG / JPEG / WebP download | manual screenshot | 2× bitmap-upsampled | 1× / 2× / 4× selector (still upsampled) | same | **4× rasterized natively — no blur** | Same | **Light-export lane colors fixed** | Same | Same | Same | Same |
-| SVG download | — | Vector, styles inlined (single theme) | Same | Same | Same | **Dual-theme self-contained** (`@media prefers-color-scheme`) | Same (lane colors fixed) | Same | Same | Same | Same |
-| Copy PNG to clipboard | — | — | Yes | Same | Yes (up to 4×) | Same | **Safari fix** | Same | Same | Same | Same |
-| Keyboard shortcuts | — | — | <kbd>T</kbd> / <kbd>E</kbd> + menu nav | Same | Same | Same | Same | Same | Same | Same | Same |
-| Accessibility | — | — | ARIA + focus-visible | Same | Same | Same | Same (+ menu a11y fixes) | Same | Same | Same | Same |
-| Print stylesheet | — | — | — | Yes | Yes (+ landscape + 2-col cards) | Same | Same | Same | Same | Same | Same |
-| Local-font fallback on export | — | — | — | Yes | Yes | Same | **+ CJK font fallback** | Same | Same | Same | Same |
-| Styling model | Inline `fill` / `stroke` | CSS custom properties + semantic classes | Same | Same | Same | Same | Same | Same | Same | Same | Same |
-| Typed renderers + schema validation | — | — | — | — | — | — | Workflow / sequence / data-flow / lifecycle | **+ architecture** | Same | Same | Same |
-| Workflow structure aids | — | — | — | — | — | — | Lanes + routed edges | Same | **Phases, groups, exception lanes, mainPath lint** | **Route-crossing guard** | Same |
-| Post-render artifact checker | — | — | — | — | — | — | — | — | **Yes** | Same | Same |
-| Trace animation | — | — | — | — | — | — | — | — | — | **Opt-in** | Same |
-| Unified CLI | — | — | — | — | — | — | — | — | — | — | **Yes** |
-| Real-repo architecture examples | — | — | — | — | — | — | — | — | — | — | **Yes** |
+| Feature | v1.0 | 2.0 | 2.1 | 2.2 | 2.3 | 2.4 | 2.5 | 2.6 | 2.7 | 2.8 | 2.9 | 2.10 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Dark theme | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Same | Same | Same |
+| Light theme | — | Toggle | Toggle | Toggle | Toggle + <kbd>T</kbd> shortcut | Same | Same | Same | Same | Same | Same | Same |
+| PNG / JPEG / WebP download | manual screenshot | 2× bitmap-upsampled | 1× / 2× / 4× selector (still upsampled) | same | **4× rasterized natively — no blur** | Same | **Light-export lane colors fixed** | Same | Same | Same | Same | Same |
+| SVG download | — | Vector, styles inlined (single theme) | Same | Same | Same | **Dual-theme self-contained** (`@media prefers-color-scheme`) | Same (lane colors fixed) | Same | Same | Same | Same | Same |
+| Copy PNG to clipboard | — | — | Yes | Same | Yes (up to 4×) | Same | **Safari fix** | Same | Same | Same | Same | Same |
+| Keyboard shortcuts | — | — | <kbd>T</kbd> / <kbd>E</kbd> + menu nav | Same | Same | Same | Same | Same | Same | Same | Same | Same |
+| Accessibility | — | — | ARIA + focus-visible | Same | Same | Same | Same (+ menu a11y fixes) | Same | Same | Same | Same | Same |
+| Print stylesheet | — | — | — | Yes | Yes (+ landscape + 2-col cards) | Same | Same | Same | Same | Same | Same | Same |
+| Local-font fallback on export | — | — | — | Yes | Yes | Same | **+ CJK font fallback** | Same | Same | Same | Same | Same |
+| Styling model | Inline `fill` / `stroke` | CSS custom properties + semantic classes | Same | Same | Same | Same | Same | Same | Same | Same | Same | Same |
+| Typed renderers + schema validation | — | — | — | — | — | — | Workflow / sequence / data-flow / lifecycle | **+ architecture** | Same | Same | Same | Same |
+| Workflow structure aids | — | — | — | — | — | — | Lanes + routed edges | Same | **Phases, groups, exception lanes, mainPath lint** | **Route-crossing guard** | Same | Same |
+| Post-render artifact checker | — | — | — | — | — | — | — | — | **Yes** | Same | Same | Same |
+| Trace animation | — | — | — | — | — | — | — | — | — | **Opt-in** | Same | Same |
+| Unified CLI | — | — | — | — | — | — | — | — | — | — | **Yes** | Same |
+| Real-repo architecture examples | — | — | — | — | — | — | — | — | — | — | **Yes** | Same |
+| Architecture grid + layout inspect | — | — | — | — | — | — | — | — | — | — | — | **Yes** |
+| Validator actionable hints | — | — | — | — | — | — | — | — | — | — | — | **Yes** |
 
 ## Quick start
 

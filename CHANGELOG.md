@@ -4,7 +4,10 @@ All notable changes are documented here. Format loosely follows [Keep a Changelo
 
 ## [Unreleased]
 
+## [2.10.0] — 2026-07-05
+
 ### Added
+- **Actionable validator hints (#7).** Architecture layout errors now include concrete `Suggested fix` coordinates (`labelAt`, `labelDy`, nudged `pos`) so agents can patch JSON in one pass.
 - **Architecture grid placement (#8).** Optional `layout.mode: "grid"` with `row`/`col` per component; explicit `pos` still overrides a cell. Example: `examples/archify-repo-grid.architecture.json`.
 - **Layout inspect (#9).** `archify inspect architecture <file.json>` (alias: `validate --layout-json`) prints computed component rects, boundaries, connection paths, and label boxes as JSON.
 
